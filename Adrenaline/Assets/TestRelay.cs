@@ -32,7 +32,7 @@ public class TestRelay : MonoBehaviour
 
             string joincode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
             Debug.Log("Join Code: " + joincode);
-            LobbyText.text = joincode;
+            LobbyText.text = "Lobby Code: " + joincode;
              
             RelayServerData relayServerData = AllocationUtils.ToRelayServerData(allocation, "dtls");
 

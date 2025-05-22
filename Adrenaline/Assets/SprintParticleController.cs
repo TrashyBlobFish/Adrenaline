@@ -5,6 +5,7 @@ using UnityEngine;
 public class SprintParticleController : MonoBehaviour
 {
     public ParticleSystem sprintParticles;
+    public PlayerMovement playerMovement;
     private ParticleSystem.EmissionModule emissionModule;
 
     // Store the original emission settings for re-enabling
@@ -26,7 +27,7 @@ public class SprintParticleController : MonoBehaviour
     private void Update()
     {
         // Check if the left shift key is pressed
-        if (Input.GetKey(KeyCode.LeftShift))
+        if (playerMovement.playerInput.actions["Sprint"].IsPressed() && playerMovement.hasStam)
         {
             if (!sprintParticles.isPlaying)
             {
