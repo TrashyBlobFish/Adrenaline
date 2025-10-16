@@ -9,208 +9,178 @@ using UnityEngine.Rendering;
 
 public class PlayerMovement : NetworkBehaviour
 {
+    [Header("References")]
     public Camera playerCamera;
     public GameObject Cameraholder;
     public GameObject Shield;
     public CameraModeSwitcher cameraSwitcher;
-
-    private Rigidbody rb;
-
-    public float runSpeed = 15f;
-    public float sprintSpeed = 20f;
-    public float jumpHeight = 2;
-    public float turnSmoothTime = 0.1f;
-    public float bounceForce = 50f;
-    public InputActionMap PlayerActionMap;
     public PlayerInput playerInput;
 
-    private bool jumpInput;
+    private Rigidbody rb;
+    private NetworkObject rootNetworkObject;
 
+    [Header("Movement Settings")]
+    public float runSpeed = 15f;
+    public float sprintSpeed = 20f;
+    public float jumpHeight = 2f;
+    public float turnSmoothTime = 0.1f;
+    private float turnSmoothVelocity;
+    public float bounceForce = 50f;
+
+    [Header("Ground Check")]
     public Transform groundCheck;
     public float groundCheckRadius = 0.2f;
     public LayerMask groundLayer;
-
     public bool isGrounded;
-    private float movementspeed;
+    private bool jumpInput;
     private bool Launched;
 
-    [Header("Sprint/Stamina Settings")]
-    public Slider staminaSlider; // assign this in the Inspector
+    [Header("Sprint / Stamina Settings")]
+    public Slider staminaSlider;
     public float maxStamina = 5f;
-    public float staminaDrainRate = 1f;  // stamina units drained per second while sprinting
-    public float staminaRegenRate = 2f;  // stamina units regenerated per second while not sprinting
-
-    private float currentStamina;
+    public float staminaDrainRate = 1f;
+    public float staminaRegenRate = 2f;
+    [HideInInspector] public float currentStamina;
     public bool hasStam => currentStamina > 0.1f;
 
+    [Header("Internal")]
+    [HideInInspector] public float movementspeed;
+
+    // Networking
     private NetworkVariable<bool> shielding = new NetworkVariable<bool>(
         false,
         NetworkVariableReadPermission.Everyone,
         NetworkVariableWritePermission.Owner
     );
 
-    float turnSmoothVelocity;
-
     void Start()
     {
+        rootNetworkObject = GetComponentInParent<NetworkObject>();
         staminaSlider = GameObject.Find("Sprint Slider").GetComponent<Slider>();
-        playerInput = GetComponent<PlayerInput>();
         rb = GetComponent<Rigidbody>();
+
         if (playerCamera == null)
-        {
             playerCamera = Camera.main;
-        }
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        currentStamina = maxStamina; // Start full
+        currentStamina = maxStamina;
         if (staminaSlider != null)
         {
             staminaSlider.maxValue = maxStamina;
             staminaSlider.value = maxStamina;
         }
     }
- 
 
     void Update()
     {
-        if (!IsOwner)
+        if (!rootNetworkObject.IsOwner)
         {
             playerCamera.gameObject.SetActive(false);
             Cameraholder.SetActive(false);
             return;
         }
-        if (IsOwner)
-        {
-            bool shieldInput = playerInput.actions["Shield"].IsPressed();
 
-            if (shieldInput && hasStam)
-            {
-                shielding.Value = true;
-                currentStamina -= staminaDrainRate * Time.deltaTime;
-                if (currentStamina < 0f)
-                {
-                    currentStamina = 0f;
-                }
-            }
-            else
-            {
-                shielding.Value = false;
-            }
-        }
-        
-
-        // Calculate movement direction
-        Vector2 input = playerInput.actions["Move"].ReadValue<Vector2>();
+        // Input caching for state machine
         jumpInput = playerInput.actions["Jump"].WasPressedThisFrame();
-        
-        Vector3 direction = new Vector3(input.x, 0f, input.y).normalized;
-
-        //is grounded check
         isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckRadius, groundLayer);
-        if (isGrounded)
+
+        // Shield input
+        bool shieldInput = playerInput.actions["Shield"].IsPressed();
+        if (shieldInput && hasStam)
         {
-            Launched = false;
-        }
-        if (jumpInput && isGrounded)
-        {
-            Debug.Log("jump attempted");
-            rb.linearVelocity += Vector3.up * jumpHeight;
-        }
-        //Manages sprint and the stamina bar
-        if (playerInput.actions["Sprint"].IsPressed() && hasStam)
-        {
-            movementspeed = sprintSpeed;
+            shielding.Value = true;
             currentStamina -= staminaDrainRate * Time.deltaTime;
-            if (currentStamina < 0f)
-            {
-                currentStamina = 0f;
-                
-            }
+            currentStamina = Mathf.Max(0f, currentStamina);
         }
-        else if (!playerInput.actions["Sprint"].IsPressed())
+        else
         {
-            movementspeed = runSpeed;
-            currentStamina += staminaRegenRate * Time.deltaTime;
-            if (currentStamina > maxStamina)
-            {
-                currentStamina = maxStamina;
-            }
+            shielding.Value = false;
         }
 
-        
-
-        //Death Plane
+        // Respawn check
         if (transform.position.y < -100)
         {
             transform.position = GameObject.Find("Respawn point").transform.position;
         }
 
+        // UI update
+        if (staminaSlider != null)
+            staminaSlider.value = currentStamina;
+    }
 
-
+    public void HandleMovement()
+    {
+        Vector2 input = playerInput.actions["Move"].ReadValue<Vector2>();
+        Vector3 direction = new Vector3(input.x, 0f, input.y).normalized;
 
         if (direction.magnitude >= 0.1f)
         {
             float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + playerCamera.transform.eulerAngles.y;
             float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
-            if (cameraSwitcher.isThirdPerson)
-            {
-                transform.rotation = Quaternion.Euler(0f, angle, 0f);
-            }
 
+            if (cameraSwitcher.isThirdPerson)
+                transform.rotation = Quaternion.Euler(0f, angle, 0f);
 
             Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
-                
-                Vector3 newVelocity = moveDir.normalized * movementspeed;
-                newVelocity.y = rb.linearVelocity.y;
-                rb.linearVelocity = newVelocity;
+            Vector3 newVelocity = moveDir.normalized * movementspeed;
+            newVelocity.y = rb.linearVelocity.y;
+            rb.linearVelocity = newVelocity;
         }
         else
         {
-            // Stop horizontal movement, keep gravity
+            // Stop horizontal movement if idle
             if (!Launched)
             {
                 Vector3 stopVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
                 rb.linearVelocity = stopVelocity;
             }
-            
         }
-        if (staminaSlider != null)
-        {
-            staminaSlider.value = currentStamina;
-        }
-
     }
+
+    // Jump handling (can be turned into JumpingState later)
+    public void HandleJump()
+    {
+        if (jumpInput && isGrounded)
+        {
+            rb.linearVelocity += Vector3.up * jumpHeight;
+        }
+    }
+
+    // Shield launch knockback
     void OnCollisionEnter(Collision collision)
     {
-        // Check if collided object has tag "Shield"
         if (collision.collider.CompareTag("Shield"))
         {
-            // Check if the shield is NOT a child of this object
             if (!collision.transform.IsChildOf(transform))
             {
                 Launched = true;
-                float launchForce = 100f;
-                float uplaunchForce = 20f;
                 StartCoroutine(ResetLaunch());
 
+                Vector3 forward = collision.transform.forward;
+                Vector3 up = Vector3.up;
+                float forwardForce = 20f;
+                float upwardForce = 10f;
 
-                Vector3 upLaunchDirection = (Vector3.up * 0.3f).normalized;
-                Vector3 launchDirection = (collision.transform.forward).normalized;
-                rb.AddForce((launchDirection * launchForce) + (upLaunchDirection * uplaunchForce) , ForceMode.Impulse);
-
+                Vector3 launchVector = (forward * forwardForce) + (up * upwardForce);
+                rb.linearVelocity = Vector3.zero;
+                rb.AddForce(launchVector, ForceMode.Impulse);
             }
         }
     }
+
     private IEnumerator ResetLaunch()
     {
         yield return new WaitForSeconds(2f);
         Launched = false;
     }
+
+    // Networking sync
     public override void OnNetworkSpawn()
     {
         shielding.OnValueChanged += OnShieldingChanged;
-        Shield.SetActive(shielding.Value); // Sync initial state
+        Shield.SetActive(shielding.Value);
     }
 
     public override void OnNetworkDespawn()
