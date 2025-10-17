@@ -9,6 +9,7 @@ public class RunningState : PlayerBaseState
 
     public override void UpdateState(PlayerStateMachine player)
     {
+        Debug.Log("The issue might be PlayerBaseState not being Network behavior");
         player.movement.HandleMovement();
 
         // Regenerate stamina when not sprinting

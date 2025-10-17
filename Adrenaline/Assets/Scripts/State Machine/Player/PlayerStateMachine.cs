@@ -11,7 +11,9 @@ public class PlayerStateMachine : NetworkBehaviour
     public IdleState idleState = new IdleState();
     public RunningState runningState = new RunningState();
     public SprintingState sprintingState = new SprintingState();
-    public JumpingState jumpingState = new JumpingState(); // 👈 NEW
+    public JumpingState jumpingState = new JumpingState();
+
+    private NetworkObject rootNetworkObject;
 
     private void Awake()
     {
@@ -20,13 +22,19 @@ public class PlayerStateMachine : NetworkBehaviour
 
     private void Start()
     {
+        rootNetworkObject = GetComponentInParent<NetworkObject>();
         currentState = idleState;
         currentState.EnterState(this);
     }
 
     private void Update()
     {
-        if (!IsOwner) return;
+        if (!rootNetworkObject.IsOwner)
+        {
+            return;
+        }
+        Debug.Log("if you see this its a proplem child");
+
 
         currentState.UpdateState(this);
 

@@ -79,6 +79,7 @@ public class PlayerMovement : NetworkBehaviour
         {
             playerCamera.gameObject.SetActive(false);
             Cameraholder.SetActive(false);
+            Debug.Log(gameObject + "is not owner");
             return;
         }
 
@@ -112,11 +113,16 @@ public class PlayerMovement : NetworkBehaviour
 
     public void HandleMovement()
     {
+        if (rootNetworkObject.IsOwner)
+        {
+            Debug.Log("Movement function running on this owner");
+        }
         Vector2 input = playerInput.actions["Move"].ReadValue<Vector2>();
         Vector3 direction = new Vector3(input.x, 0f, input.y).normalized;
 
         if (direction.magnitude >= 0.1f)
         {
+            Debug.Log("Input detected");
             float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + playerCamera.transform.eulerAngles.y;
             float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
 
