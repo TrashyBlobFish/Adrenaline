@@ -258,7 +258,7 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 0
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -326,7 +326,7 @@ HingeJoint:
     bounciness: 0
     bounceMinVelocity: 0.2
     contactDistance: 0
-  m_BreakForce: 250
+  m_BreakForce: 300
   m_BreakTorque: Infinity
   m_EnableCollision: 0
   m_EnablePreprocessing: 1
@@ -395,9 +395,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2886890579189670067}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -10.7, y: -1.26, z: -3.54}
-  m_LocalScale: {x: 0.38, y: 0.38, z: 0.38}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -3.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3008754561334290149}
@@ -501,7 +501,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3696128425123056220}
   m_Layer: 0
-  m_Name: Building
+  m_Name: Door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -517,8 +517,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 64.49446, y: 2.6518419, z: 31.2593}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.33, y: 0.33, z: 0.33540985}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 3252868351789407051}
   - {fileID: 2167112227795381364}
@@ -1176,7 +1176,7 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 0
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -1244,7 +1244,7 @@ HingeJoint:
     bounciness: 0
     bounceMinVelocity: 0.2
     contactDistance: 0
-  m_BreakForce: 250
+  m_BreakForce: 300
   m_BreakTorque: Infinity
   m_EnableCollision: 0
   m_EnablePreprocessing: 1
@@ -1314,8 +1314,8 @@ Transform:
   m_GameObject: {fileID: 8580817457817035712}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: -10.7, y: -1.26, z: -0.71}
-  m_LocalScale: {x: 0.38, y: 0.38, z: 0.38}
+  m_LocalPosition: {x: 0, y: 0, z: 3.875}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 9057307536827925369}

@@ -108,7 +108,9 @@ public class PlayerMovement : NetworkBehaviour
 
         // UI update
         if (staminaSlider != null)
+        {
             staminaSlider.value = currentStamina;
+        }
     }
 
     public void HandleMovement()
