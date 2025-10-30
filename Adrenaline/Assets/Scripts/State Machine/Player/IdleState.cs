@@ -12,7 +12,9 @@ public class IdleState : PlayerBaseState
 
     public override void UpdateState(PlayerStateMachine player)
     {
-        // Nothing much happens in idle, handled by state machine transitions
+        // Regenerate stamina when not sprinting
+        player.movement.currentStamina += player.movement.staminaRegenRate * Time.deltaTime;
+        player.movement.currentStamina = Mathf.Min(player.movement.currentStamina, player.movement.maxStamina);
     }
 
     public override void ExitState(PlayerStateMachine player)

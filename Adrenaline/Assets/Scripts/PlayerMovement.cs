@@ -166,7 +166,7 @@ public class PlayerMovement : NetworkBehaviour
 
                 Vector3 forward = collision.transform.forward;
                 Vector3 up = Vector3.up;
-                float forwardForce = 20f;
+                float forwardForce = 40f;
                 float upwardForce = 10f;
 
                 Vector3 launchVector = (forward * forwardForce) + (up * upwardForce);
