@@ -333,7 +333,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4495561476568588251}
   - component: {fileID: 796223177400597076}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -595,7 +595,7 @@ GameObject:
   - component: {fileID: 2611376012874521952}
   - component: {fileID: 986883118681653080}
   - component: {fileID: 8389855185334957222}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Shield
   m_TagString: Shield
   m_Icon: {fileID: 0}
@@ -678,7 +678,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2973756525137538740}
-  m_Material: {fileID: 13400000, guid: d50438d9da97b3b4083dad96894cede0, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -701,7 +701,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2973756525137538740}
-  m_Material: {fileID: 13400000, guid: d50438d9da97b3b4083dad96894cede0, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0

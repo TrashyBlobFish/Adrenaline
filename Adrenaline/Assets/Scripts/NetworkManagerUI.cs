@@ -31,4 +31,5 @@ public class NetworkManagerUI : MonoBehaviour
             startcam.gameObject.SetActive(false);
         });
     }
+    
 }

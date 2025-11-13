@@ -5014,4 +5014,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8de5a25f3455f1a4985659d9384dd2e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  StaminaRegained: 33
+  StaminaRegained: 2
