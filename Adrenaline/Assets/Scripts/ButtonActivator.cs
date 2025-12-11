@@ -57,6 +57,15 @@ public class ButtonActivator : MonoBehaviour
         activated = true;
         Debug.Log("All buttons pressed! Activating object.");
 
+        Boss.GetComponent<TutorialBoss>().SetPhase(3);
+
+        // Reset ALL buttons after Phase 3
+        foreach (OneWayButton button in buttons)
+        {
+            if (button != null)
+                button.ResetButton();
+        }
+
         if (targetRigidbody != null)
         {
             targetRigidbody.isKinematic = false;
@@ -68,8 +77,54 @@ public class ButtonActivator : MonoBehaviour
     {
         if (collision.gameObject == Boss)
         {
-            Boss.GetComponent<TutorialBoss>().SetPhase(3);
-            gameObject.SetActive(false);
+            DisableObject();
         }
     }
+    private void DisableObject()
+    {
+        // Disable mesh
+        MeshRenderer mesh = GetComponent<MeshRenderer>();
+        if (mesh != null)
+            mesh.enabled = false;
+
+        // Disable collider
+        Collider col = GetComponent<Collider>();
+        if (col != null)
+            col.enabled = false;
+
+        // Disable rigidbody influence
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.isKinematic = true;  // No physics influence
+            rb.useGravity = false;
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+
+        Debug.Log("Object visually hidden and physics disabled.");
+    }
+    public void EnableObject()
+    {
+        // Enable mesh
+        MeshRenderer mesh = GetComponent<MeshRenderer>();
+        if (mesh != null)
+            mesh.enabled = true;
+
+        // Enable colliders (supports multiple)
+        Collider[] cols = GetComponents<Collider>();
+        foreach (var col in cols)
+            col.enabled = true;
+
+        // Enable Rigidbody physics again
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.isKinematic = false;
+            rb.useGravity = true;
+        }
+
+        Debug.Log($"{name} enabled (visible + physics active).");
+    }
+
 }

@@ -5,6 +5,7 @@ public class Bullet : MonoBehaviour
     public float speed = 50f;
     private Rigidbody rb;
     public GameObject Boss;
+    public GameObject Boulder;
 
     void Start()
     {
@@ -36,6 +37,8 @@ public class Bullet : MonoBehaviour
         }
         if (collision.gameObject == Boss)
         {
+            Boulder = Boss.GetComponent<TutorialBoss>().Boulder;
+            Boulder.GetComponent<ButtonActivator>().EnableObject();
             Boss.GetComponent<TutorialBoss>().SetPhase(2);
         }
         if (collision.collider.CompareTag("Player") && collision.gameObject != GameObject.Find("Shield"))

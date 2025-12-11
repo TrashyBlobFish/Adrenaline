@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 using Unity.Netcode;
 using UnityEngine.UI;
 using UnityEngine.Rendering;
+using TMPro;
 
 
 public class PlayerMovement : NetworkBehaviour
@@ -15,11 +16,14 @@ public class PlayerMovement : NetworkBehaviour
     public GameObject Shield;
     public CameraModeSwitcher cameraSwitcher;
     public PlayerInput playerInput;
+    public InputActionAsset inputActions;
+    public TMP_Text resultText;
 
     private Rigidbody rb;
     private NetworkObject rootNetworkObject;
 
     [Header("Movement Settings")]
+    private bool canControl = true;
     public float runSpeed = 15f;
     public float sprintSpeed = 20f;
     public float jumpHeight = 2f;
@@ -34,17 +38,47 @@ public class PlayerMovement : NetworkBehaviour
     public bool isGrounded;
     private bool jumpInput;
     private bool Launched;
+    private NetworkVariable<float> networkBatHoldTime = new NetworkVariable<float>(
+    0f,
+    NetworkVariableReadPermission.Everyone,
+    NetworkVariableWritePermission.Owner
+);
+
+    public float BatHoldTime => networkBatHoldTime.Value;
+    private float batHoldTime = 0f;
+    private bool isBatTimerActive = false;
+    private NetworkVariable<bool> hasBaseballBat = new NetworkVariable<bool>(
+    false,
+    NetworkVariableReadPermission.Everyone,
+    NetworkVariableWritePermission.Server
+);
+    public bool HasBaseballBat
+    {
+        get => hasBaseballBat.Value;
+        set
+        {
+            if (IsServer)
+                hasBaseballBat.Value = value;
+            // The OnValueChanged event will handle enabling/disabling the bat
+        }
+    }
+    public GameObject BaseballBat;
+    private RigidbodyConstraints defaultConstraints;
 
     [Header("Sprint / Stamina Settings")]
     public Slider staminaSlider;
     public float maxStamina = 5f;
+    public float minStaminaToActivate = 0.5f; // Required to start
+    public float minStaminaToUse = 0.1f;
     public float staminaDrainRate = 1f;
     public float staminaRegenRate = 2f;
     [HideInInspector] public float currentStamina;
-    public bool hasStam => currentStamina > 0.1f;
+    public bool hasStaminaToActivate => currentStamina > minStaminaToActivate;
+    public bool hasStaminaToUse => currentStamina > minStaminaToUse;
 
     [Header("Internal")]
     [HideInInspector] public float movementspeed;
+    public bool wallrunning = false;
 
     // Networking
     private NetworkVariable<bool> shielding = new NetworkVariable<bool>(
@@ -53,11 +87,37 @@ public class PlayerMovement : NetworkBehaviour
         NetworkVariableWritePermission.Owner
     );
 
+    void Awake()
+    {
+        if (playerInput == null)
+            playerInput = GetComponent<PlayerInput>();
+
+        if (playerInput.actions == null)
+        {
+            var loadedActions = Resources.Load<InputActionAsset>("Player Controls");
+            if (loadedActions != null)
+            {
+                playerInput.actions = loadedActions;
+            }
+            else if (inputActions != null)
+            {
+                playerInput.actions = inputActions;
+            }
+            else
+            {
+                Debug.LogError("InputActionAsset not found or assigned!");
+            }
+        }
+    }
+
     void Start()
     {
+        if (BaseballBat != null)
+            BaseballBat.SetActive(HasBaseballBat);
         rootNetworkObject = GetComponentInParent<NetworkObject>();
         staminaSlider = GameObject.Find("Sprint Slider").GetComponent<Slider>();
         rb = GetComponent<Rigidbody>();
+        defaultConstraints = rb.constraints;
 
         if (playerCamera == null)
             playerCamera = Camera.main;
@@ -79,17 +139,21 @@ public class PlayerMovement : NetworkBehaviour
         {
             playerCamera.gameObject.SetActive(false);
             Cameraholder.SetActive(false);
-            Debug.Log(gameObject + "is not owner");
             return;
         }
-
+        //tracks bat hold time
+        if (isBatTimerActive)
+        {
+            batHoldTime += Time.deltaTime;
+            networkBatHoldTime.Value = batHoldTime;
+        }
         // Input caching for state machine
         jumpInput = playerInput.actions["Jump"].WasPressedThisFrame();
         isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckRadius, groundLayer);
 
         // Shield input
         bool shieldInput = playerInput.actions["Shield"].IsPressed();
-        if (shieldInput && hasStam)
+        if (shieldInput && hasStaminaToActivate)
         {
             shielding.Value = true;
             currentStamina -= staminaDrainRate * Time.deltaTime;
@@ -99,6 +163,8 @@ public class PlayerMovement : NetworkBehaviour
         {
             shielding.Value = false;
         }
+
+
 
         // Respawn check
         if (transform.position.y < -100)
@@ -112,19 +178,24 @@ public class PlayerMovement : NetworkBehaviour
             staminaSlider.value = currentStamina;
         }
     }
+    //intilizes timer when bat is held
+    public void StartBatTimer()
+    {
+        isBatTimerActive = true;
+        Debug.Log($"{name} started bat timer. Current: {batHoldTime}");
+    }
+    public void StopBatTimer()
+    {
+        isBatTimerActive = false;
+    }
 
     public void HandleMovement()
     {
-        if (rootNetworkObject.IsOwner)
-        {
-            Debug.Log("Movement function running on this owner");
-        }
+        if (!canControl) return;
         Vector2 input = playerInput.actions["Move"].ReadValue<Vector2>();
         Vector3 direction = new Vector3(input.x, 0f, input.y).normalized;
-
         if (direction.magnitude >= 0.1f)
         {
-            Debug.Log("Input detected");
             float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + playerCamera.transform.eulerAngles.y;
             float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
 
@@ -150,21 +221,22 @@ public class PlayerMovement : NetworkBehaviour
     // Jump handling (can be turned into JumpingState later)
     public void HandleJump()
     {
+        if (!canControl) return;
         if (jumpInput && isGrounded)
         {
             rb.linearVelocity += Vector3.up * jumpHeight;
         }
     }
 
-    // Shield launch knockback
+    // Bat launch knockback
     void OnCollisionEnter(Collision collision)
     {
-        if (collision.collider.CompareTag("Shield"))
+        if (collision.collider.CompareTag("BaseballBat"))
         {
             if (!collision.transform.IsChildOf(transform))
             {
                 Launched = true;
-                StartCoroutine(ResetLaunch());
+                StartCoroutine(LaunchAndTransferBatRoutine());
 
                 Vector3 forward = collision.transform.forward;
                 Vector3 up = Vector3.up;
@@ -178,17 +250,74 @@ public class PlayerMovement : NetworkBehaviour
         }
     }
 
-    private IEnumerator ResetLaunch()
+    private IEnumerator LaunchAndTransferBatRoutine()
     {
+        // Allow free rotation and disable control
+        rb.constraints = RigidbodyConstraints.None;
+        canControl = false;
+
+        // Optionally disable the bat collider to prevent re-hit during launch
+        if (BaseballBat != null)
+        {
+            var batCollider = BaseballBat.GetComponent<Collider>();
+            if (batCollider != null)
+                batCollider.enabled = false;
+        }
+
+        // Add random angular velocity for ragdoll effect
+        rb.angularVelocity = new Vector3(
+            Random.Range(-10f, 10f),
+            Random.Range(-10f, 10f),
+            Random.Range(-10f, 10f)
+        );
+
         yield return new WaitForSeconds(2f);
+
+        // Restore constraints and control
+        rb.constraints = defaultConstraints;
+        canControl = true;
         Launched = false;
+
+        // Transfer the bat after launch
+        if (IsServer)
+        {
+            var allPlayers = Object.FindObjectsByType<PlayerMovement>(FindObjectsSortMode.None);
+            foreach (var player in allPlayers)
+            {
+                if (player.HasBaseballBat)
+                    player.HasBaseballBat = false;
+            }
+            HasBaseballBat = true;
+        }
+
+        // Re-enable the bat collider
+        if (BaseballBat != null)
+        {
+            var batCollider = BaseballBat.GetComponent<Collider>();
+            if (batCollider != null)
+                batCollider.enabled = true;
+        }
     }
+
+
+
 
     // Networking sync
     public override void OnNetworkSpawn()
     {
         shielding.OnValueChanged += OnShieldingChanged;
         Shield.SetActive(shielding.Value);
+
+        hasBaseballBat.OnValueChanged += OnBaseballBatChanged;
+        BaseballBat.SetActive(hasBaseballBat.Value);
+
+        // Force Keyboard&Mouse for owner
+        if (IsOwner && playerInput != null)
+        {
+            playerInput.SwitchCurrentControlScheme(
+                Keyboard.current, Mouse.current
+            );
+        }
     }
 
     public override void OnNetworkDespawn()
@@ -199,5 +328,16 @@ public class PlayerMovement : NetworkBehaviour
     private void OnShieldingChanged(bool oldValue, bool newValue)
     {
         Shield.SetActive(newValue);
+    }
+
+    private void OnBaseballBatChanged(bool oldValue, bool newValue)
+    {
+        if (BaseballBat != null)
+            BaseballBat.SetActive(newValue);
+
+        if (newValue)
+            StartBatTimer();
+        else
+            StopBatTimer();
     }
 }

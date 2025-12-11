@@ -34,7 +34,7 @@ public class JumpingState : PlayerBaseState
 
             if (moveInput.magnitude < 0.1f)
                 player.SwitchState(player.idleState);
-            else if (sprintInput && player.movement.hasStam)
+            else if (sprintInput && player.movement.hasStaminaToActivate)
                 player.SwitchState(player.sprintingState);
             else
                 player.SwitchState(player.runningState);

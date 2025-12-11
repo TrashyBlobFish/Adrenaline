@@ -27,7 +27,7 @@ public class SprintParticleController : MonoBehaviour
     private void Update()
     {
         // Check if the left shift key is pressed
-        if (playerMovement.playerInput.actions["Sprint"].IsPressed() && playerMovement.hasStam)
+        if (playerMovement.playerInput.actions["Sprint"].IsPressed() && playerMovement.hasStaminaToUse)
         {
             if (!sprintParticles.isPlaying)
             {

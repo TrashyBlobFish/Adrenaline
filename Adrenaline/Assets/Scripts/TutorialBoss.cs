@@ -9,6 +9,8 @@ public class TutorialBoss : MonoBehaviour
     public ParticleSystem phase2Particles;
     public GameObject bulletPrefab;
     public GameObject PhaseTwoMap;
+    public GameObject Boulder;
+    public GameObject VictoryScreen;
     public float bulletSpeed = 20f;
     public float spinSpeed = 180f;
     public float shootInterval = 2f;
@@ -54,6 +56,7 @@ public class TutorialBoss : MonoBehaviour
         else if (phase == 2)
         {
             PhaseTwoMap.SetActive(true);
+            
 
             // Spin in circles instead of looking at the player
             transform.Rotate(Vector3.up, spinSpeed * Time.deltaTime);
@@ -80,6 +83,7 @@ public class TutorialBoss : MonoBehaviour
         {
             if (transform.position.y <= 150f)
             {
+                VictoryScreen.SetActive(true);
                 Destroy(gameObject);
             }
         }

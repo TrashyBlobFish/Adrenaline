@@ -42,4 +42,12 @@ public class OneWayButton : MonoBehaviour
     {
         return isPushed;
     }
+
+    public void ResetButton()
+    {
+        isPushed = false;
+
+        if (rend != null && notPushedMaterial != null)
+            rend.material = notPushedMaterial;
+    }
 }
