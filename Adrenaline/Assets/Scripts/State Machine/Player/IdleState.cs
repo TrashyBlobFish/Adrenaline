@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class IdleState : PlayerBaseState
 {
@@ -12,7 +13,7 @@ public class IdleState : PlayerBaseState
 
     public override void UpdateState(PlayerStateMachine player)
     {
-
+        
         // Regenerate stamina when not sprinting
         player.movement.currentStamina += player.movement.staminaRegenRate * Time.deltaTime;
         player.movement.currentStamina = Mathf.Min(player.movement.currentStamina, player.movement.maxStamina);

@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 using Unity.Netcode;
 using UnityEngine.UI;
 using UnityEngine.Rendering;
-using TMPro;
+using UnityEngine.SocialPlatforms.Impl;
 
 
 public class PlayerMovement : NetworkBehaviour
@@ -17,7 +17,7 @@ public class PlayerMovement : NetworkBehaviour
     public CameraModeSwitcher cameraSwitcher;
     public PlayerInput playerInput;
     public InputActionAsset inputActions;
-    public TMP_Text resultText;
+
 
     private Rigidbody rb;
     private NetworkObject rootNetworkObject;
@@ -87,6 +87,8 @@ public class PlayerMovement : NetworkBehaviour
         NetworkVariableWritePermission.Owner
     );
 
+    private UserProfileData userProfile;
+
     void Awake()
     {
         if (playerInput == null)
@@ -112,6 +114,7 @@ public class PlayerMovement : NetworkBehaviour
 
     void Start()
     {
+        userProfile = Object.FindFirstObjectByType<UserProfileData>();
         if (BaseballBat != null)
             BaseballBat.SetActive(HasBaseballBat);
         rootNetworkObject = GetComponentInParent<NetworkObject>();
@@ -155,6 +158,7 @@ public class PlayerMovement : NetworkBehaviour
         bool shieldInput = playerInput.actions["Shield"].IsPressed();
         if (shieldInput && hasStaminaToActivate)
         {
+            userProfile.TimesShieldUsed++;
             shielding.Value = true;
             currentStamina -= staminaDrainRate * Time.deltaTime;
             currentStamina = Mathf.Max(0f, currentStamina);
@@ -169,6 +173,7 @@ public class PlayerMovement : NetworkBehaviour
         // Respawn check
         if (transform.position.y < -100)
         {
+            userProfile.NumberOfFalls++;
             transform.position = GameObject.Find("Respawn point").transform.position;
         }
 
@@ -209,6 +214,7 @@ public class PlayerMovement : NetworkBehaviour
         }
         else
         {
+            userProfile.TimeSpentAFK += Time.deltaTime;
             // Stop horizontal movement if idle
             if (!Launched)
             {

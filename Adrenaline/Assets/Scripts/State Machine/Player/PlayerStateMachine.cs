@@ -14,8 +14,6 @@ public class PlayerStateMachine : NetworkBehaviour
     public SprintingState sprintingState = new SprintingState();
     public JumpingState jumpingState = new JumpingState();
     public WallRunningState wallRunningState = new WallRunningState();
-
-
     private NetworkObject rootNetworkObject;
 
     private void Awake()
@@ -26,6 +24,7 @@ public class PlayerStateMachine : NetworkBehaviour
 
     private void Start()
     {
+        
         rootNetworkObject = GetComponentInParent<NetworkObject>();
         currentState = idleState;
         currentState.EnterState(this);

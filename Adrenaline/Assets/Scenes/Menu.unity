@@ -9527,6 +9527,8 @@ GameObject:
   - component: {fileID: 1404117579}
   - component: {fileID: 1404117581}
   - component: {fileID: 1404117582}
+  - component: {fileID: 1404117584}
+  - component: {fileID: 1404117583}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -9614,6 +9616,35 @@ MonoBehaviour:
   matchDuration: 60
   matchTimerText: {fileID: 1015705532}
   winnerText: {fileID: 2141257341}
+--- !u!114 &1404117583
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1404117576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c9dc96567fcfd64f8a55b78167507fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1404117584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1404117576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a6f2949490849749a405e0bead39988, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  NumberOfFalls: 0
+  TimesShieldUsed: 0
+  TimeSpentAFK: 0
+  Timespent3rdPerson: 0
+  Timespent1stPerson: 0
 --- !u!1 &1546513616
 GameObject:
   m_ObjectHideFlags: 0

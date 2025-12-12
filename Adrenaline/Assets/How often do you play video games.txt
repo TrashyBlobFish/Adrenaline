@@ -1,0 +1,36 @@
+How often do you play video games?
+
+☐ Daily
+
+☐ A few times per week
+
+☐ A few times per month
+
+☐ Rarely
+
+☐ Never
+
+What is your preferred genre of games?
+
+☐ Action / Adventure
+
+☐ RPG
+
+☐ Shooter
+
+☐ Strategy
+
+☐ Puzzle
+
+☐ Other: ________
+
+The controls felt intuitive and easy to understand.
+1 2 3 4 5
+
+I felt engaged and motivated to keep playing.
+1 2 3 4 5
+
+The game does a good job building off the enjoyment of moving quickly
+1 2 3 4 5
+
+What was the most frustrating or confusing part of the game, and why?

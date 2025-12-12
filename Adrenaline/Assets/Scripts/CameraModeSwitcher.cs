@@ -3,6 +3,7 @@ using Unity.Cinemachine;
 
 public class CameraModeSwitcher : MonoBehaviour
 {
+    private UserProfileData userProfile;
     public CinemachineCamera thirdPersonVCam;
     public CinemachineCamera firstPersonVCam;
 
@@ -10,6 +11,7 @@ public class CameraModeSwitcher : MonoBehaviour
 
     void Start()
     {
+        userProfile = Object.FindFirstObjectByType<UserProfileData>();
         SetCameraMode(isThirdPerson);
     }
 
@@ -20,6 +22,13 @@ public class CameraModeSwitcher : MonoBehaviour
             isThirdPerson = !isThirdPerson;
             SetCameraMode(isThirdPerson);
         }
+        // When in third person
+        if (userProfile != null && isThirdPerson)
+            userProfile.Timespent3rdPerson += Time.deltaTime;
+
+        // When in first person
+        if (userProfile != null && !isThirdPerson)
+            userProfile.Timespent1stPerson += Time.deltaTime;
     }
 
     void SetCameraMode(bool thirdPerson)
