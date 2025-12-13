@@ -4,6 +4,7 @@ How often do you play video games?
 (2)
 
 ☐ A few times per week
+(1)
 
 ☐ A few times per month
 
@@ -26,19 +27,21 @@ What is your preferred genre of games?
 
 ☐ Other: ________
 (Looter)
+(souls like)
 
 The controls felt intuitive and easy to understand.
 1 2 3 4 5
-(5)(4)
+(5:2)(4:1)
 
 I felt engaged and motivated to keep playing.
 1 2 3 4 5
-(4)(3)
+(4:2)(3:1)
 
 The game does a good job building off the enjoyment of moving quickly
 1 2 3 4 5
-(3)(5)
+(3:2)(5:1)
 
 What was the most frustrating or confusing part of the game, and why?
 (Bat getting caught on the stairs, sucks when you chase someone, and get caught at the stairs)
 (Server side priority, leaves the other player at a disadvantage)
+(Server side priority, hitting players is inconsistent)
