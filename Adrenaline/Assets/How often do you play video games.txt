@@ -1,13 +1,13 @@
 How often do you play video games?
 
 ☐ Daily
-(2)
+(3)
 
 ☐ A few times per week
 (1)
 
 ☐ A few times per month
-
+(1)
 ☐ Rarely
 
 ☐ Never
@@ -15,7 +15,7 @@ How often do you play video games?
 What is your preferred genre of games?
 
 ☐ Action / Adventure
-
+(2)
 ☐ RPG
 
 ☐ Shooter
@@ -31,17 +31,19 @@ What is your preferred genre of games?
 
 The controls felt intuitive and easy to understand.
 1 2 3 4 5
-(5:2)(4:1)
+(5:2)(4:2)(3:1)
 
 I felt engaged and motivated to keep playing.
 1 2 3 4 5
-(4:2)(3:1)
+(4:2)(3:3)
 
 The game does a good job building off the enjoyment of moving quickly
 1 2 3 4 5
-(3:2)(5:1)
+(3:3)(5:1)(4:1)
 
 What was the most frustrating or confusing part of the game, and why?
 (Bat getting caught on the stairs, sucks when you chase someone, and get caught at the stairs)
 (Server side priority, leaves the other player at a disadvantage)
 (Server side priority, hitting players is inconsistent)
+(more players are more enjoyable)
+(easy to get caught on things)

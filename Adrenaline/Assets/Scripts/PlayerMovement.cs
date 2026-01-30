@@ -26,10 +26,12 @@ public class PlayerMovement : NetworkBehaviour
     private bool canControl = true;
     public float runSpeed = 15f;
     public float sprintSpeed = 20f;
+    public float acceleration = 20f;
     public float jumpHeight = 2f;
     public float turnSmoothTime = 0.1f;
     private float turnSmoothVelocity;
     public float bounceForce = 50f;
+    public PlayerStateMachine stateMachine;
 
     [Header("Ground Check")]
     public Transform groundCheck;
@@ -114,6 +116,8 @@ public class PlayerMovement : NetworkBehaviour
 
     void Start()
     {
+        if (stateMachine == null)
+            stateMachine = GetComponent<PlayerStateMachine>();
         userProfile = Object.FindFirstObjectByType<UserProfileData>();
         if (BaseballBat != null)
             BaseballBat.SetActive(HasBaseballBat);
@@ -171,7 +175,7 @@ public class PlayerMovement : NetworkBehaviour
 
 
         // Respawn check
-        if (transform.position.y < -100)
+        if (transform.position.y < -50)
         {
             userProfile.NumberOfFalls++;
             transform.position = GameObject.Find("Respawn point").transform.position;
@@ -199,6 +203,11 @@ public class PlayerMovement : NetworkBehaviour
         if (!canControl) return;
         Vector2 input = playerInput.actions["Move"].ReadValue<Vector2>();
         Vector3 direction = new Vector3(input.x, 0f, input.y).normalized;
+
+        // Check if sprinting state is active
+        bool isSprinting = stateMachine != null && stateMachine.currentState is SprintingState;
+        bool isShielding = shielding.Value;
+
         if (direction.magnitude >= 0.1f)
         {
             float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + playerCamera.transform.eulerAngles.y;
@@ -207,20 +216,35 @@ public class PlayerMovement : NetworkBehaviour
             if (cameraSwitcher.isThirdPerson)
                 transform.rotation = Quaternion.Euler(0f, angle, 0f);
 
+            float speed = isSprinting ? sprintSpeed : runSpeed;
             Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
-            Vector3 newVelocity = moveDir.normalized * movementspeed;
-            newVelocity.y = rb.linearVelocity.y;
-            rb.linearVelocity = newVelocity;
+            Vector3 targetVelocity = moveDir.normalized * speed;
+            targetVelocity.y = rb.linearVelocity.y;
+
+            // If sprinting or shielding, set velocity directly (no acceleration)
+            if (isSprinting || isShielding)
+            {
+                rb.linearVelocity = targetVelocity;
+            }
+            else
+            {
+                // Smooth acceleration
+                rb.linearVelocity = Vector3.MoveTowards(
+                    rb.linearVelocity,
+                    targetVelocity,
+                    acceleration * Time.deltaTime
+                );
+            }
         }
         else
         {
             userProfile.TimeSpentAFK += Time.deltaTime;
-            // Stop horizontal movement if idle
-            if (!Launched)
-            {
-                Vector3 stopVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
-                rb.linearVelocity = stopVelocity;
-            }
+            Vector3 stopVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
+            rb.linearVelocity = Vector3.MoveTowards(
+                rb.linearVelocity,
+                stopVelocity,
+                acceleration * Time.deltaTime
+            );
         }
     }
 
@@ -234,26 +258,14 @@ public class PlayerMovement : NetworkBehaviour
         }
     }
 
-    // Bat launch knockback
-    void OnCollisionEnter(Collision collision)
+    public void ApplyFling(Vector3 launchVector)
     {
-        if (collision.collider.CompareTag("BaseballBat"))
-        {
-            if (!collision.transform.IsChildOf(transform))
-            {
-                Launched = true;
-                StartCoroutine(LaunchAndTransferBatRoutine());
-
-                Vector3 forward = collision.transform.forward;
-                Vector3 up = Vector3.up;
-                float forwardForce = 40f;
-                float upwardForce = 10f;
-
-                Vector3 launchVector = (forward * forwardForce) + (up * upwardForce);
-                rb.linearVelocity = Vector3.zero;
-                rb.AddForce(launchVector, ForceMode.Impulse);
-            }
-        }
+        Debug.Log("ApplyFling received: " + launchVector);
+        if (!IsServer) return;
+        rb.linearVelocity = Vector3.zero;
+        rb.AddForce(launchVector, ForceMode.Impulse);
+        if (!Launched)
+            StartCoroutine(LaunchAndTransferBatRoutine());
     }
 
     private IEnumerator LaunchAndTransferBatRoutine()
@@ -305,7 +317,7 @@ public class PlayerMovement : NetworkBehaviour
         }
     }
 
-
+    
 
 
     // Networking sync
@@ -346,4 +358,28 @@ public class PlayerMovement : NetworkBehaviour
         else
             StopBatTimer();
     }
+    [ServerRpc]
+    public void RequestFlingPlayerServerRpc(ulong targetId, Vector3 launchVector)
+    {
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(targetId, out var netObj))
+        {
+            var target = netObj.GetComponentInChildren<PlayerMovement>();
+            Debug.Log(target);
+            if (target != null)
+            {
+                Debug.Log("ApplyFling called on: " + target.name);
+                target.ApplyFlingClientRpc(launchVector);
+            }
+        }
+    }
+    [ClientRpc]
+    public void ApplyFlingClientRpc(Vector3 launchVector)
+    {
+        rb.linearVelocity = Vector3.zero;
+        rb.AddForce(launchVector, ForceMode.Impulse);
+        if (!Launched)
+            StartCoroutine(LaunchAndTransferBatRoutine());
+    }
+
+
 }
