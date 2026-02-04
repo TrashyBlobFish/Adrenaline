@@ -3432,6 +3432,11 @@ PrefabInstance:
       propertyPath: GlobalObjectIdHash
       value: 2766030185
       objectReference: {fileID: 0}
+    - target: {fileID: 1943697226327264709, guid: 74f5c697e7c1a844c9ac9a52148fcd2d,
+        type: 3}
+      propertyPath: panLevelCustomCurve.m_Curve.Array.data[0].value
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8106969813453453020, guid: 74f5c697e7c1a844c9ac9a52148fcd2d,
         type: 3}
       propertyPath: m_LocalPosition.x

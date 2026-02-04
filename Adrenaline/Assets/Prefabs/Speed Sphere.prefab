@@ -5015,4 +5015,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speedGained: 3
-  speedDuration: 3
+  speedDuration: 5
+  respawnDelay: 15

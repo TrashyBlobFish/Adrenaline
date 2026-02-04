@@ -22,6 +22,22 @@ public class PlayerMovement : NetworkBehaviour
     private Rigidbody rb;
     private NetworkObject rootNetworkObject;
 
+    [Header("Audio")]
+    public AudioSource speedReachedAudioSource;
+    public AudioClip speedReachedClip;
+    public float speedReachedCooldown = 2f;
+    private float lastSpeedReachedTime = -10f;
+
+    public AudioSource trainAudioSource;
+    public AudioClip trainClip;
+    public float trainFadeSpeed = 2f;
+    public float trainMaxVolume = 0.7f;
+    public float trainGracePeriod = 0.3f;
+    private float trainGraceTimer = 0f;
+
+    public float speedThreshold = 18f;
+    private bool wasAboveThreshold = false;
+
     [Header("Movement Settings")]
     private bool canControl = true;
     public float runSpeed = 15f;
@@ -171,7 +187,54 @@ public class PlayerMovement : NetworkBehaviour
         {
             shielding.Value = false;
         }
+        //Handles sound
+        float currentSpeed = rb.linearVelocity.magnitude;
+        bool aboveThreshold = currentSpeed >= speedThreshold;
 
+        // Speed reached sound (once, with cooldown after dropping below threshold)
+        if (aboveThreshold && !wasAboveThreshold)
+        {
+            if (Time.time - lastSpeedReachedTime > speedReachedCooldown)
+            {
+                speedReachedAudioSource.PlayOneShot(speedReachedClip);
+                lastSpeedReachedTime = Time.time;
+            }
+        }
+        if (!aboveThreshold && wasAboveThreshold)
+        {
+            // Player dropped below threshold, start cooldown timer
+            lastSpeedReachedTime = Time.time;
+        }
+
+
+        // Wind sound logic
+        if (aboveThreshold)
+        {
+            trainGraceTimer = trainGracePeriod;
+            if (!trainAudioSource.isPlaying)
+            {
+                trainAudioSource.clip = trainClip;
+                trainAudioSource.loop = true;
+                trainAudioSource.volume = 0f;
+                trainAudioSource.Play();
+            }
+        }
+        else
+        {
+            trainGraceTimer -= Time.deltaTime;
+        }
+
+        // Fade wind sound in/out
+        float targetVolume = (trainGraceTimer > 0f) ? trainMaxVolume : 0f;
+        trainAudioSource.volume = Mathf.Lerp(trainAudioSource.volume, targetVolume, trainFadeSpeed * Time.deltaTime);
+
+        // Stop wind sound if faded out
+        if (trainAudioSource.isPlaying && trainAudioSource.volume < 0.01f && trainGraceTimer <= 0f)
+        {
+            trainAudioSource.Stop();
+        }
+
+        wasAboveThreshold = aboveThreshold;
 
 
         // Respawn check
