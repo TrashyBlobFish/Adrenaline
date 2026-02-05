@@ -21,14 +21,12 @@ public class SaveJSONData : MonoBehaviour
             ToString("M-d-yy-HH-mm") + ".json";
     }
     // Update is called once per frame
-    void Update()
+    public void SaveAndExit()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
+        
             CreateDataToSave();
             SaveData();
-            StartCoroutine(ExitPause());
-        }
+            ExitPause();
     }
 
     IEnumerator ExitPause()

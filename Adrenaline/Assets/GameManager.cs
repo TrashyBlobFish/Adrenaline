@@ -64,6 +64,12 @@ public class GameManager : NetworkBehaviour
         var players = Object.FindObjectsByType<PlayerMovement>(FindObjectsSortMode.None);
         Debug.Log($"Total players to evaluate: {players.Length}");
 
+        // Turn off all baseball bats for all players
+        foreach (var player in players)
+        {
+            player.HasBaseballBat = false;
+        }
+
         PlayerMovement winner = null;
         float minBatTime = float.MaxValue;
 
@@ -89,7 +95,6 @@ public class GameManager : NetworkBehaviour
             Debug.Log("No winner could be determined.");
             ShowMatchResultClientRpc(ulong.MaxValue); // No winner
         }
-
 
     }
 

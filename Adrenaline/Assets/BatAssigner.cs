@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class BatAssigner : MonoBehaviour
 {
-    public GameObject baseballBatPrefab;
     private void OnCollisionEnter(Collision collision)
     {
         if (NetworkManager.Singleton.IsServer)
