@@ -23,13 +23,18 @@ public class PlayerMovement : NetworkBehaviour
     private NetworkObject rootNetworkObject;
 
     [Header("Audio")]
-    public AudioSource speedReachedAudioSource;
+    [SerializeField] private Transform audioManager;
+    [SerializeField] private AudioSource movementAudioSource;
+    [SerializeField] private AudioSource effectsAudioSource;
+
+    [Header("Audio Clips")]
     public AudioClip speedReachedClip;
+    public AudioClip trainClip;
+
+    [Header("Audio Settings")]
     public float speedReachedCooldown = 2f;
     private float lastSpeedReachedTime = -10f;
 
-    public AudioSource trainAudioSource;
-    public AudioClip trainClip;
     public float trainFadeSpeed = 2f;
     public float trainMaxVolume = 0.7f;
     public float trainGracePeriod = 0.3f;
@@ -145,6 +150,16 @@ public class PlayerMovement : NetworkBehaviour
         if (playerCamera == null)
             playerCamera = Camera.main;
 
+        // Setup audio sources if not assigned
+        if (audioManager == null)
+            audioManager = transform.Find("AudioManager");
+
+        if (movementAudioSource == null && audioManager != null)
+            movementAudioSource = audioManager.Find("Movement")?.GetComponent<AudioSource>();
+
+        if (effectsAudioSource == null && audioManager != null)
+            effectsAudioSource = audioManager.Find("Effects")?.GetComponent<AudioSource>();
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
@@ -196,7 +211,7 @@ public class PlayerMovement : NetworkBehaviour
         {
             if (Time.time - lastSpeedReachedTime > speedReachedCooldown)
             {
-                speedReachedAudioSource.PlayOneShot(speedReachedClip);
+                effectsAudioSource.PlayOneShot(speedReachedClip);
                 lastSpeedReachedTime = Time.time;
             }
         }
@@ -206,17 +221,16 @@ public class PlayerMovement : NetworkBehaviour
             lastSpeedReachedTime = Time.time;
         }
 
-
         // Wind sound logic
         if (aboveThreshold)
         {
             trainGraceTimer = trainGracePeriod;
-            if (!trainAudioSource.isPlaying)
+            if (!movementAudioSource.isPlaying)
             {
-                trainAudioSource.clip = trainClip;
-                trainAudioSource.loop = true;
-                trainAudioSource.volume = 0f;
-                trainAudioSource.Play();
+                movementAudioSource.clip = trainClip;
+                movementAudioSource.loop = true;
+                movementAudioSource.volume = 0f;
+                movementAudioSource.Play();
             }
         }
         else
@@ -226,12 +240,12 @@ public class PlayerMovement : NetworkBehaviour
 
         // Fade wind sound in/out
         float targetVolume = (trainGraceTimer > 0f) ? trainMaxVolume : 0f;
-        trainAudioSource.volume = Mathf.Lerp(trainAudioSource.volume, targetVolume, trainFadeSpeed * Time.deltaTime);
+        movementAudioSource.volume = Mathf.Lerp(movementAudioSource.volume, targetVolume, trainFadeSpeed * Time.deltaTime);
 
         // Stop wind sound if faded out
-        if (trainAudioSource.isPlaying && trainAudioSource.volume < 0.01f && trainGraceTimer <= 0f)
+        if (movementAudioSource.isPlaying && movementAudioSource.volume < 0.01f && trainGraceTimer <= 0f)
         {
-            trainAudioSource.Stop();
+            movementAudioSource.Stop();
         }
 
         wasAboveThreshold = aboveThreshold;
@@ -379,8 +393,6 @@ public class PlayerMovement : NetworkBehaviour
                 batCollider.enabled = true;
         }
     }
-
-    
 
 
     // Networking sync
