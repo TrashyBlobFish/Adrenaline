@@ -47,7 +47,7 @@ public class PlayerStateMachine : NetworkBehaviour
 
 
         WallRunning wallRun = movement.GetComponent<WallRunning>();
-        if (wallRun != null && wallRun.IsWallRunningPossible() && movement.hasStaminaToActivate)
+        if (wallRun != null && wallRun.IsWallRunningPossible())
         {
             if (currentState != wallRunningState)
             {
@@ -57,14 +57,14 @@ public class PlayerStateMachine : NetworkBehaviour
         }
 
         // Jump check comes first
-        if (jumpInput && movement.isGrounded)
+        else if (jumpInput && movement.isGrounded)
         {
             SwitchState(jumpingState);
         }else if (moveInput.magnitude < 0.1f)
         {
             SwitchState(idleState);
         }
-        else if (sprintInput && movement.hasStaminaToActivate)
+        else if (sprintInput)
         {
             SwitchState(sprintingState);
         }

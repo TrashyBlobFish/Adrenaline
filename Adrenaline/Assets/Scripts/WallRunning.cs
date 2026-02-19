@@ -68,30 +68,6 @@ public class WallRunning : MonoBehaviour
         return !Physics.Raycast(transform.position, Vector3.down, minJumpHeight, whatIsGround);
     }
 
-    private void StateMachine()
-    {
-        // Getting Inputs
-        horizontalInput = Input.GetAxisRaw("Horizontal");
-        verticalInput = Input.GetAxisRaw("Vertical");
-
-        upwardsRunning = Input.GetKey(upwardsRunKey);
-        downwardsRunning = Input.GetKey(downwardsRunKey);
-
-        // State 1 - Wallrunning
-        if((wallLeft || wallRight) && verticalInput > 0 && AboveGround())
-        {
-            if (!pm.wallrunning)
-                StartWallRun();
-        }
-
-        // State 3 - None
-        else
-        {
-            if (pm.wallrunning)
-                StopWallRun();
-        }
-    }
-
     private void StartWallRun()
     {
         pm.wallrunning = true;
@@ -133,6 +109,10 @@ public class WallRunning : MonoBehaviour
     {
         pm.wallrunning = false;
         rb.useGravity = true;
+        if (wallRight)
+            rb.AddForce(rightWallhit.normal * 1f, ForceMode.VelocityChange);
+        else if (wallLeft)
+            rb.AddForce(leftWallhit.normal * 1f, ForceMode.VelocityChange);
     }
     public bool IsWallRunningPossible()
     {

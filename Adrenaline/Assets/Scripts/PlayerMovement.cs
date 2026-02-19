@@ -24,12 +24,10 @@ public class PlayerMovement : NetworkBehaviour
 
     [Header("Audio")]
     [SerializeField] private Transform audioManager;
-    [SerializeField] private AudioSource movementAudioSource;
-    [SerializeField] private AudioSource effectsAudioSource;
+    [SerializeField] private AudioSource WalkAudioSource;
+    [SerializeField] private AudioSource SonicBoomAudioSource;
+    [SerializeField] private AudioSource TrainAudioSource;
 
-    [Header("Audio Clips")]
-    public AudioClip speedReachedClip;
-    public AudioClip trainClip;
 
     [Header("Audio Settings")]
     public float speedReachedCooldown = 2f;
@@ -154,11 +152,6 @@ public class PlayerMovement : NetworkBehaviour
         if (audioManager == null)
             audioManager = transform.Find("AudioManager");
 
-        if (movementAudioSource == null && audioManager != null)
-            movementAudioSource = audioManager.Find("Movement")?.GetComponent<AudioSource>();
-
-        if (effectsAudioSource == null && audioManager != null)
-            effectsAudioSource = audioManager.Find("Effects")?.GetComponent<AudioSource>();
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -191,27 +184,59 @@ public class PlayerMovement : NetworkBehaviour
 
         // Shield input
         bool shieldInput = playerInput.actions["Shield"].IsPressed();
-        if (shieldInput && hasStaminaToActivate)
+
+        if (shielding.Value)
         {
-            userProfile.TimesShieldUsed++;
-            shielding.Value = true;
+            // Shield is currently active, drain stamina
             currentStamina -= staminaDrainRate * Time.deltaTime;
             currentStamina = Mathf.Max(0f, currentStamina);
+
+            // Deactivate if stamina is too low or button released
+            if (!shieldInput || !hasStaminaToUse)
+            {
+                shielding.Value = false;
+            }
         }
         else
         {
-            shielding.Value = false;
+            // Only activate if button pressed and enough stamina to activate
+            if (shieldInput && hasStaminaToActivate)
+            {
+                userProfile.TimesShieldUsed++;
+                shielding.Value = true;
+            }
         }
         //Handles sound
         float currentSpeed = rb.linearVelocity.magnitude;
         bool aboveThreshold = currentSpeed >= speedThreshold;
+
+        // Walk sound effect: play when moving, not sprinting, not above threshold, and grounded
+        bool isMoving = rb.linearVelocity.magnitude > 0.1f && isGrounded;
+        bool isSprinting = stateMachine != null && stateMachine.currentState is SprintingState;
+
+        if (isMoving && !isSprinting && !aboveThreshold)
+        {
+            if (WalkAudioSource != null && !WalkAudioSource.isPlaying)
+            {
+                WalkAudioSource.loop = true;
+                WalkAudioSource.Play();
+            }
+        }
+        else
+        {
+            if (WalkAudioSource != null && WalkAudioSource.isPlaying)
+            {
+                WalkAudioSource.Stop();
+            }
+        }
 
         // Speed reached sound (once, with cooldown after dropping below threshold)
         if (aboveThreshold && !wasAboveThreshold)
         {
             if (Time.time - lastSpeedReachedTime > speedReachedCooldown)
             {
-                effectsAudioSource.PlayOneShot(speedReachedClip);
+                if (SonicBoomAudioSource != null)
+                    SonicBoomAudioSource.Play();
                 lastSpeedReachedTime = Time.time;
             }
         }
@@ -221,31 +246,22 @@ public class PlayerMovement : NetworkBehaviour
             lastSpeedReachedTime = Time.time;
         }
 
-        // Wind sound logic
+        // Train sound effect: play when above threshold, stop when below
         if (aboveThreshold)
         {
-            trainGraceTimer = trainGracePeriod;
-            if (!movementAudioSource.isPlaying)
+            if (!TrainAudioSource.isPlaying)
             {
-                movementAudioSource.clip = trainClip;
-                movementAudioSource.loop = true;
-                movementAudioSource.volume = 0f;
-                movementAudioSource.Play();
+                TrainAudioSource.loop = true;
+                TrainAudioSource.volume = trainMaxVolume;
+                TrainAudioSource.Play();
             }
         }
         else
         {
-            trainGraceTimer -= Time.deltaTime;
-        }
-
-        // Fade wind sound in/out
-        float targetVolume = (trainGraceTimer > 0f) ? trainMaxVolume : 0f;
-        movementAudioSource.volume = Mathf.Lerp(movementAudioSource.volume, targetVolume, trainFadeSpeed * Time.deltaTime);
-
-        // Stop wind sound if faded out
-        if (movementAudioSource.isPlaying && movementAudioSource.volume < 0.01f && trainGraceTimer <= 0f)
-        {
-            movementAudioSource.Stop();
+            if (TrainAudioSource.isPlaying)
+            {
+                TrainAudioSource.Stop();
+            }
         }
 
         wasAboveThreshold = aboveThreshold;
