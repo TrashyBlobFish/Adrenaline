@@ -18779,6 +18779,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1719971772214757868, guid: 79487eb5b29d46a4d9832dcc23f366d9,
+        type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 1608208536
+      objectReference: {fileID: 0}
+    - target: {fileID: 1719971772214757868, guid: 79487eb5b29d46a4d9832dcc23f366d9,
+        type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 4291876633
+      objectReference: {fileID: 0}
     - target: {fileID: 5367967285226919188, guid: 79487eb5b29d46a4d9832dcc23f366d9,
         type: 3}
       propertyPath: m_Name
@@ -35421,6 +35431,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1719971772214757868, guid: 79487eb5b29d46a4d9832dcc23f366d9,
+        type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 2548068913
+      objectReference: {fileID: 0}
+    - target: {fileID: 1719971772214757868, guid: 79487eb5b29d46a4d9832dcc23f366d9,
+        type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 4291876633
       objectReference: {fileID: 0}
     - target: {fileID: 5367967285226919188, guid: 79487eb5b29d46a4d9832dcc23f366d9,
         type: 3}
@@ -55216,6 +55236,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1719971772214757868, guid: 79487eb5b29d46a4d9832dcc23f366d9,
+        type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 1016723162
+      objectReference: {fileID: 0}
+    - target: {fileID: 1719971772214757868, guid: 79487eb5b29d46a4d9832dcc23f366d9,
+        type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 4291876633
       objectReference: {fileID: 0}
     - target: {fileID: 5367967285226919188, guid: 79487eb5b29d46a4d9832dcc23f366d9,
         type: 3}
