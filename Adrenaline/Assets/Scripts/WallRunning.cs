@@ -29,6 +29,11 @@ public class WallRunning : MonoBehaviour
     private bool wallLeft;
     private bool wallRight;
 
+    [Header("Attachment Settings")]
+    public float minAttachSpeed = 5f; // Minimum speed to start wall-running
+    public float exitForce = 5f; // Force applied when exiting wall-run
+    public bool requireInputTowardsWall = true; // Must press towards wall to attach
+    
     [Header("References")]
     public Transform orientation;
     private PlayerMovement pm;
@@ -97,6 +102,7 @@ public class WallRunning : MonoBehaviour
         // push to wall force
         if (!(wallLeft && horizontalInput > 0) && !(wallRight && horizontalInput < 0))
             rb.AddForce(-wallNormal * 100, ForceMode.Force);
+        
         Vector3 horizontalVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
         if (horizontalVelocity.magnitude > maxWallRunSpeed)
         {
@@ -110,12 +116,59 @@ public class WallRunning : MonoBehaviour
         pm.wallrunning = false;
         rb.useGravity = true;
         if (wallRight)
-            rb.AddForce(rightWallhit.normal * 1f, ForceMode.VelocityChange);
+            rb.AddForce(rightWallhit.normal * exitForce, ForceMode.VelocityChange);
         else if (wallLeft)
-            rb.AddForce(leftWallhit.normal * 1f, ForceMode.VelocityChange);
+            rb.AddForce(leftWallhit.normal * exitForce, ForceMode.VelocityChange);
     }
+
     public bool IsWallRunningPossible()
     {
-        return (wallLeft || wallRight) && verticalInput > 0 && AboveGround();
+        // Must be next to a wall and above ground
+        if (!(wallLeft || wallRight) || !AboveGround())
+            return false;
+
+        // Check if player has minimum speed to attach
+        Vector3 horizontalVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+        if (horizontalVelocity.magnitude < minAttachSpeed)
+            return false;
+
+        // Require intentional input towards the wall
+        if (requireInputTowardsWall)
+        {
+            // Player must be pressing towards the wall (not away from it)
+            if (wallRight && horizontalInput < 0) // Wall on right, pressing left (away)
+                return false;
+            if (wallLeft && horizontalInput > 0) // Wall on left, pressing right (away)
+                return false;
+
+            // Optional: Also require forward input for more intentional feel
+            if (verticalInput <= 0) // Not pressing forward
+                return false;
+        }
+
+        return true;
+    }
+
+    public bool ShouldExitWallRun()
+    {
+        // Exit if no longer next to wall
+        if (!wallLeft && !wallRight)
+            return true;
+
+        // Exit if player is grounded
+        if (!AboveGround())
+            return true;
+
+        // Exit if player actively presses away from wall
+        if (wallRight && horizontalInput < -0.5f) // Pressing strongly left
+            return true;
+        if (wallLeft && horizontalInput > 0.5f) // Pressing strongly right
+            return true;
+
+        // Exit if player stops pressing forward
+        if (verticalInput < -0.5f) // Pressing backward
+            return true;
+
+        return false;
     }
 }

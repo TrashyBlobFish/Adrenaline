@@ -5017,3 +5017,4 @@ MonoBehaviour:
   speedGained: 3
   speedDuration: 5
   respawnDelay: 15
+  playerAudioSourceName: SpeedOrb sounds

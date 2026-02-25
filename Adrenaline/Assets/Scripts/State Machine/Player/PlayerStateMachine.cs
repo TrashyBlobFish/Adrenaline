@@ -47,20 +47,34 @@ public class PlayerStateMachine : NetworkBehaviour
 
 
         WallRunning wallRun = movement.GetComponent<WallRunning>();
-        if (wallRun != null && wallRun.IsWallRunningPossible())
+        if (wallRun != null)
         {
-            if (currentState != wallRunningState)
+            // Check if we should exit wall-running
+            if (currentState == wallRunningState && wallRun.ShouldExitWallRun())
+            {
+                // Exit wall-running, let normal state logic take over
+                wallRun.StopWallRun();
+                // Don't return, let the state machine transition normally
+            }
+            // Check if we should enter wall-running
+            else if (wallRun.IsWallRunningPossible() && currentState != wallRunningState)
             {
                 SwitchState(wallRunningState);
+                return;
+            }
+            // Stay in wall-running if already there and conditions still met
+            else if (currentState == wallRunningState)
+            {
                 return;
             }
         }
 
         // Jump check comes first
-        else if (jumpInput && movement.isGrounded)
+        if (jumpInput && movement.isGrounded)
         {
             SwitchState(jumpingState);
-        }else if (moveInput.magnitude < 0.1f)
+        }
+        else if (moveInput.magnitude < 0.1f)
         {
             SwitchState(idleState);
         }
