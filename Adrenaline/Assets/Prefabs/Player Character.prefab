@@ -175,7 +175,6 @@ MonoBehaviour:
   TrainAudioSource: {fileID: 2538589237404790232}
   speedReachedCooldown: 2
   trainFadeSpeed: 2
-  trainMaxVolume: 0.7
   trainGracePeriod: 0.3
   speedThreshold: 18
   runSpeed: 15
@@ -619,6 +618,9 @@ MonoBehaviour:
   downwardsRunKey: 306
   wallCheckDistance: 0.7
   minJumpHeight: 1
+  minAttachSpeed: 5
+  exitForce: 5
+  requireInputTowardsWall: 1
   orientation: {fileID: 8294696228818297489}
 --- !u!1 &1492017074293843124
 GameObject:
@@ -7259,7 +7261,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0

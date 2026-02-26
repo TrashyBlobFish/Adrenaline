@@ -27,6 +27,8 @@ public class PlayerMovement : NetworkBehaviour
     [SerializeField] private AudioSource WalkAudioSource;
     [SerializeField] private AudioSource SonicBoomAudioSource;
     [SerializeField] private AudioSource TrainAudioSource;
+    private float trainTargetVolume = 0f;
+    private float trainInitialVolume = 0.7f;
 
 
     [Header("Audio Settings")]
@@ -34,8 +36,7 @@ public class PlayerMovement : NetworkBehaviour
     private float lastSpeedReachedTime = -10f;
 
     public float trainFadeSpeed = 2f;
-    public float trainMaxVolume = 0.7f;
-    public float trainGracePeriod = 0.3f;
+    public float trainGracePeriod = 0.1f;
     private float trainGraceTimer = 0f;
 
     public float speedThreshold = 18f;
@@ -151,6 +152,8 @@ public class PlayerMovement : NetworkBehaviour
         // Setup audio sources if not assigned
         if (audioManager == null)
             audioManager = transform.Find("AudioManager");
+        if (TrainAudioSource != null)
+            trainInitialVolume = TrainAudioSource.volume;
 
 
         Cursor.lockState = CursorLockMode.Locked;
@@ -249,19 +252,39 @@ public class PlayerMovement : NetworkBehaviour
         // Train sound effect: play when above threshold, stop when below
         if (aboveThreshold)
         {
+            trainTargetVolume = trainInitialVolume;
             if (!TrainAudioSource.isPlaying)
             {
+                TrainAudioSource.volume = 0f; // Start silent
                 TrainAudioSource.loop = true;
-                TrainAudioSource.volume = trainMaxVolume;
                 TrainAudioSource.Play();
             }
         }
         else
         {
-            if (TrainAudioSource.isPlaying)
+            trainTargetVolume = 0f;
+        }
+
+        // Smoothly adjust volume towards target
+        TrainAudioSource.volume = Mathf.MoveTowards(
+            TrainAudioSource.volume,
+            trainTargetVolume,
+            trainFadeSpeed/1.5f * Time.deltaTime
+        );
+
+        // Only stop after volume has been zero for a grace period
+        if (TrainAudioSource.volume <= 0.01f)
+        {
+            trainGraceTimer += Time.deltaTime;
+            if (trainGraceTimer > trainGracePeriod && TrainAudioSource.isPlaying)
             {
                 TrainAudioSource.Stop();
+                trainGraceTimer = 0f;
             }
+        }
+        else
+        {
+            trainGraceTimer = 0f;
         }
 
         wasAboveThreshold = aboveThreshold;
