@@ -7,10 +7,12 @@ using TMPro;
 
 public class GameManager : NetworkBehaviour
 {
+    
     public float matchDuration = 180f; // 3 minutes
     private float matchTimer;
     private bool matchActive = false;
     private NetworkVariable<float> networkMatchTimer = new NetworkVariable<float>(0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public GameObject GameUI; // Assign in Inspector
     public TMP_Text matchTimerText; // Assign in Inspector
     public TMP_Text winnerText;     // Assign in Inspector
 

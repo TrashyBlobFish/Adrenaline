@@ -17,6 +17,7 @@ public class PlayerMovement : NetworkBehaviour
     public CameraModeSwitcher cameraSwitcher;
     public PlayerInput playerInput;
     public InputActionAsset inputActions;
+    public GameObject GameUI;
 
 
     private Rigidbody rb;
@@ -148,6 +149,11 @@ public class PlayerMovement : NetworkBehaviour
 
         if (playerCamera == null)
             playerCamera = Camera.main;
+        if (GameUI == null)
+        {
+            GameUI = GameObject.Find("Game UI");
+            GameUI.SetActive(true);
+        }
 
         // Setup audio sources if not assigned
         if (audioManager == null)

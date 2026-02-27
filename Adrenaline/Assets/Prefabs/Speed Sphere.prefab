@@ -5014,7 +5014,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b77f54a2809673d4eb6fbd670c1806c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speedGained: 3
+  speedGained: 5
   speedDuration: 5
   respawnDelay: 15
   playerAudioSourceName: SpeedOrb sounds

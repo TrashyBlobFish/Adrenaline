@@ -92,7 +92,7 @@ public class StaminaSphere : NetworkBehaviour
         }
 
         // Get player renderer and original color
-        Renderer playerRenderer = targetPlayer.GetComponentInChildren<Renderer>();
+        Renderer playerRenderer = targetPlayer.GetComponentInChildren<MeshRenderer>();
         Color originalColor = playerRenderer.material.color;
         int yellowSteps = 0;
         float tintAmountPerStep = 1f / Mathf.Max(1, count);
