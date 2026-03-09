@@ -169,6 +169,7 @@ MonoBehaviour:
   playerInput: {fileID: 5967381752262661377}
   inputActions: {fileID: -944628639613478452, guid: a01b4b6d57af9e5429175cabd1390144,
     type: 3}
+  GameUI: {fileID: 0}
   audioManager: {fileID: 3603227857379152417}
   WalkAudioSource: {fileID: 5474596071930093094}
   SonicBoomAudioSource: {fileID: 3418494401876660511}
@@ -1922,7 +1923,7 @@ ParticleSystem:
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}
   emitterVelocityMode: 1
-  looping: 0
+  looping: 1
   prewarm: 0
   playOnAwake: 0
   useUnscaledTime: 0
