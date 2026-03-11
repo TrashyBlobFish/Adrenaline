@@ -163,6 +163,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   playerCamera: {fileID: 3412047951361833976}
+  playerUICamera: {fileID: 0}
   Cameraholder: {fileID: 7480684754851339785}
   Shield: {fileID: 2973756525137538740}
   cameraSwitcher: {fileID: 3397816003829870455}
@@ -1887,7 +1888,7 @@ GameObject:
   - component: {fileID: 5654857460023757121}
   - component: {fileID: 3816678550304372588}
   m_Layer: 0
-  m_Name: Sprint Particle
+  m_Name: Particle Controller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

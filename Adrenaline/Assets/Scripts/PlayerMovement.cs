@@ -116,6 +116,7 @@ public class PlayerMovement : NetworkBehaviour
     {
         if (playerInput == null)
             playerInput = GetComponent<PlayerInput>();
+        
 
         if (playerInput.actions == null)
         {

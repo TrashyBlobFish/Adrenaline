@@ -37,6 +37,19 @@ public class SpeedPitch : MonoBehaviour
 
     void Update()
     {
+        GameObject player = GameObject.Find("Player");
+        if (player != null)
+        {
+            playerMovement = player.GetComponent<PlayerMovement>();
+            if (playerMovement == null)
+            {
+                Debug.LogWarning("SpeedPitch: PlayerMovement script not found on Player!");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("SpeedPitch: No GameObject with tag 'Player' found!");
+        }
         if (playerMovement != null && audioSource != null)
         {
             // Get the player's current speed (assuming PlayerMovement has a way to access speed)
