@@ -88,6 +88,17 @@ public class PlayerMovement : NetworkBehaviour
     public GameObject BaseballBat;
     private RigidbodyConstraints defaultConstraints;
 
+    [Header("Trip Settings")]
+    public float tripRange = 2f;
+    public LayerMask playerLayerMask;
+    public float tripCooldown = 3f;
+    [Header("Trip Launch Values")]
+    public float tripForwardForce = 15f;
+    public float tripUpwardForce = 5f;
+    public float tripLaunchDuration = 1f;
+    private float lastTripTime = -10f;
+    private bool tripInput;
+
     [Header("Sprint / Stamina Settings")]
     public Slider staminaSlider;
     public float maxStamina = 5f;
@@ -192,6 +203,17 @@ public class PlayerMovement : NetworkBehaviour
         jumpInput = playerInput.actions["Jump"].WasPressedThisFrame();
         isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckRadius, groundLayer);
 
+        // Trip input (using 'T' key as default - you can change this in the Input Actions asset)
+        if (playerInput.actions.FindAction("Trip") != null)
+        {
+            tripInput = playerInput.actions["Trip"].WasPressedThisFrame();
+        }
+        else
+        {
+            // Fallback to keyboard input if Trip action doesn't exist
+            tripInput = Keyboard.current != null && Keyboard.current.tKey.wasPressedThisFrame;
+        }
+
         // Shield input
         bool shieldInput = playerInput.actions["Shield"].IsPressed();
 
@@ -216,6 +238,14 @@ public class PlayerMovement : NetworkBehaviour
                 shielding.Value = true;
             }
         }
+
+        // Handle trip input
+        if (tripInput && Time.time - lastTripTime > tripCooldown && isGrounded)
+        {
+            HandleTrip();
+            Debug.Log("Trip input detected");
+        }
+
         //Handles sound
         float currentSpeed = rb.linearVelocity.magnitude;
         bool aboveThreshold = currentSpeed >= speedThreshold;
@@ -310,6 +340,120 @@ public class PlayerMovement : NetworkBehaviour
             staminaSlider.value = currentStamina;
         }
     }
+
+    private void HandleTrip()
+    {
+        lastTripTime = Time.time;
+        Debug.Log("=== TRIP ATTEMPT DEBUG ===");
+        Debug.Log($"This object: {gameObject.name}, Parent: {transform.parent?.name}");
+        Debug.Log($"Attempting to trip from position: {transform.position}");
+        Debug.Log($"Trip range: {tripRange}");
+        Debug.Log($"Player LayerMask: {playerLayerMask.value}");
+        
+        // Use the root NetworkObject's position if this is a child
+        Vector3 searchPosition = rootNetworkObject != null ? rootNetworkObject.transform.position : transform.position;
+        searchPosition += Vector3.up * 0.5f; // Slightly elevated
+        
+        Debug.Log($"Search position: {searchPosition}");
+        
+        // Find nearby players within trip range
+        Collider[] nearbyColliders = Physics.OverlapSphere(searchPosition, tripRange, playerLayerMask);
+        Debug.Log($"OverlapSphere found {nearbyColliders.Length} colliders");
+        
+        // Also try without layer mask for debugging
+        Collider[] allColliders = Physics.OverlapSphere(searchPosition, tripRange);
+        Debug.Log($"OverlapSphere without layer mask found {allColliders.Length} total colliders");
+        
+        // Debug all found objects
+        foreach (Collider collider in allColliders)
+        {
+            Debug.Log($"Found: '{collider.name}' (Parent: '{collider.transform.parent?.name}') Layer: {collider.gameObject.layer} Tag: '{collider.tag}'");
+            
+            // Check if this collider or its parent has PlayerMovement
+            PlayerMovement playerMovement = collider.GetComponent<PlayerMovement>();
+            if (playerMovement == null)
+                playerMovement = collider.GetComponentInParent<PlayerMovement>();
+            if (playerMovement == null)
+                playerMovement = collider.GetComponentInChildren<PlayerMovement>();
+                
+            if (playerMovement != null)
+                Debug.Log($"  -> Has PlayerMovement: {playerMovement.name}, IsOwner: {playerMovement.IsOwner}");
+        }
+        
+        foreach (Collider collider in nearbyColliders)
+        {
+            Debug.Log($"Processing collider with correct layer: {collider.name}");
+            
+            // Try multiple ways to find the PlayerMovement component
+            PlayerMovement targetPlayer = null;
+            
+            // Method 1: Direct component
+            targetPlayer = collider.GetComponent<PlayerMovement>();
+            
+            // Method 2: Check parent
+            if (targetPlayer == null)
+                targetPlayer = collider.GetComponentInParent<PlayerMovement>();
+                
+            // Method 3: Check children
+            if (targetPlayer == null)
+                targetPlayer = collider.GetComponentInChildren<PlayerMovement>();
+            
+            // Method 4: Check if collider has Player tag and search for PlayerMovement in hierarchy
+            if (targetPlayer == null && collider.CompareTag("Player"))
+            {
+                // Look for PlayerMovement in the root NetworkObject
+                var networkObj = collider.GetComponentInParent<NetworkObject>();
+                if (networkObj != null)
+                    targetPlayer = networkObj.GetComponentInChildren<PlayerMovement>();
+            }
+            
+            Debug.Log($"PlayerMovement search result: {(targetPlayer != null ? targetPlayer.name : "null")}");
+            
+            if (targetPlayer != null && !targetPlayer.IsOwner && targetPlayer != this)
+            {
+                // Use the NetworkObject's position for direction calculation
+                Vector3 targetPosition = targetPlayer.rootNetworkObject != null ? 
+                    targetPlayer.rootNetworkObject.transform.position : targetPlayer.transform.position;
+                Vector3 sourcePosition = rootNetworkObject != null ? 
+                    rootNetworkObject.transform.position : transform.position;
+                    
+                Vector3 directionToTarget = (targetPosition - sourcePosition).normalized;
+                float dotProduct = Vector3.Dot(transform.forward, directionToTarget);
+                
+                Debug.Log($"Target direction dot product: {dotProduct}, Target IsGrounded: {targetPlayer.isGrounded}")
+;
+                if (dotProduct > 0.5f && targetPlayer.isGrounded) // 60 degree cone in front
+                {
+                    // Calculate launch vector
+                    Vector3 launchDirection = directionToTarget;
+                    launchDirection.y = 0;
+                    launchDirection = launchDirection.normalized;
+                    
+                    Vector3 tripLaunchVector = launchDirection * tripForwardForce + Vector3.up * tripUpwardForce;
+                    
+                    // Request trip on server
+                    RequestTripPlayerServerRpc(targetPlayer.NetworkObjectId, tripLaunchVector);
+                    
+                    Debug.Log($"SUCCESS: Tripped player: {targetPlayer.name} with force: {tripLaunchVector}");
+                    break; // Only trip one player at a time
+                }
+                else
+                {
+                    Debug.Log($"Target failed conditions - DotProduct: {dotProduct} (need > 0.5), IsGrounded: {targetPlayer.isGrounded}");
+                }
+            }
+            else if (targetPlayer == null)
+            {
+                Debug.Log($"No PlayerMovement found on collider: {collider.name}");
+            }
+            else
+            {
+                Debug.Log($"Skipped target - IsOwner: {targetPlayer?.IsOwner}, Same object: {targetPlayer == this}");
+            }
+        }
+        Debug.Log("=== END TRIP DEBUG ===");
+    }
+
     //intilizes timer when bat is held
     public void StartBatTimer()
     {
@@ -389,6 +533,36 @@ public class PlayerMovement : NetworkBehaviour
         rb.AddForce(launchVector, ForceMode.Impulse);
         if (!Launched)
             StartCoroutine(LaunchAndTransferBatRoutine());
+    }
+
+    public void ApplyTrip(Vector3 launchVector, float duration)
+    {
+        Debug.Log("ApplyTrip received: " + launchVector);
+        rb.linearVelocity = Vector3.zero;
+        rb.AddForce(launchVector, ForceMode.Impulse);
+        if (!Launched)
+            StartCoroutine(TripRoutine(duration));
+    }
+
+    private IEnumerator TripRoutine(float duration)
+    {
+        // Briefly disable control during trip
+        canControl = false;
+        Launched = true;
+
+        // Add slight rotation for trip effect
+        rb.angularVelocity = new Vector3(
+            Random.Range(-5f, 5f),
+            0f,
+            Random.Range(-5f, 5f)
+        );
+
+        yield return new WaitForSeconds(duration);
+
+        // Restore control
+        canControl = true;
+        Launched = false;
+        rb.angularVelocity = Vector3.zero;
     }
 
     private IEnumerator LaunchAndTransferBatRoutine()
@@ -479,6 +653,7 @@ public class PlayerMovement : NetworkBehaviour
         else
             StopBatTimer();
     }
+
     [ServerRpc]
     public void RequestFlingPlayerServerRpc(ulong targetId, Vector3 launchVector)
     {
@@ -493,6 +668,21 @@ public class PlayerMovement : NetworkBehaviour
             }
         }
     }
+
+    [ServerRpc]
+    public void RequestTripPlayerServerRpc(ulong targetId, Vector3 launchVector)
+    {
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(targetId, out var netObj))
+        {
+            var target = netObj.GetComponentInChildren<PlayerMovement>();
+            if (target != null)
+            {
+                Debug.Log("ApplyTrip called on: " + target.name);
+                target.ApplyTripClientRpc(launchVector, tripLaunchDuration);
+            }
+        }
+    }
+
     [ClientRpc]
     public void ApplyFlingClientRpc(Vector3 launchVector)
     {
@@ -502,5 +692,27 @@ public class PlayerMovement : NetworkBehaviour
             StartCoroutine(LaunchAndTransferBatRoutine());
     }
 
+    [ClientRpc]
+    public void ApplyTripClientRpc(Vector3 launchVector, float duration)
+    {
+        ApplyTrip(launchVector, duration);
+    }
 
+    // Visualization for trip range in editor
+    private void OnDrawGizmosSelected()
+    {
+        // Draw trip range
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, tripRange);
+        
+        // Draw forward direction cone
+        Gizmos.color = Color.yellow;
+        Vector3 forward = transform.forward * tripRange;
+        Vector3 left = Quaternion.Euler(0, -30, 0) * forward;
+        Vector3 right = Quaternion.Euler(0, 30, 0) * forward;
+        
+        Gizmos.DrawLine(transform.position, transform.position + left);
+        Gizmos.DrawLine(transform.position, transform.position + right);
+        Gizmos.DrawLine(transform.position + left, transform.position + right);
+    }
 }

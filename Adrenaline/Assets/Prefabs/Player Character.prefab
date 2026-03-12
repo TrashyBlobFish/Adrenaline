@@ -163,7 +163,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   playerCamera: {fileID: 3412047951361833976}
-  playerUICamera: {fileID: 0}
   Cameraholder: {fileID: 7480684754851339785}
   Shield: {fileID: 2973756525137538740}
   cameraSwitcher: {fileID: 3397816003829870455}
@@ -193,6 +192,14 @@ MonoBehaviour:
     m_Bits: 256
   isGrounded: 0
   BaseballBat: {fileID: 5035562071849247766}
+  tripRange: 1.5
+  playerLayerMask:
+    serializedVersion: 2
+    m_Bits: 64
+  tripCooldown: 3
+  tripForwardForce: 5
+  tripUpwardForce: 5
+  tripLaunchDuration: 0.5
   staminaSlider: {fileID: 0}
   maxStamina: 5
   minStaminaToActivate: 0.5
@@ -1184,7 +1191,7 @@ GameObject:
   - component: {fileID: 5713722318859460935}
   - component: {fileID: 8454212284824500460}
   - component: {fileID: -6024617243024504063}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Player Character
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -6788,8 +6795,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 557c435b885cc6041976f25d45b5d9d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  SpeedLines: {fileID: 0}
   sprintParticles: {fileID: 2144597345407395897}
   playerMovement: {fileID: 707014016030725849}
+  minSpeedForParticles: 1
+  maxSpeedForMaxBurst: 20
+  minBurstCount: 1
+  maxBurstCount: 10
+  minBurstInterval: 0.5
+  maxBurstInterval: 0.05
+  speedLinesActivationSpeed: 17
+  syncInterval: 0.1
 --- !u!1 &7092416501755427638
 GameObject:
   m_ObjectHideFlags: 0
