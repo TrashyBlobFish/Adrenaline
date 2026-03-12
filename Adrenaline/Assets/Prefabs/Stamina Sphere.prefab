@@ -244,6 +244,8 @@ MonoBehaviour:
   respawnDelay: 15
   explosionParticles: {fileID: 5872791908591517637}
   internalParticles: {fileID: 5104052092239701148}
+  tintMaterial: {fileID: 2100000, guid: 77d532f719da3b5488b5f934fe87addf, type: 2}
+  tintFadeOutDuration: 0.5
 --- !u!1 &6116819926545159337
 GameObject:
   m_ObjectHideFlags: 0

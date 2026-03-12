@@ -14,6 +14,7 @@ public class StaminaSphere : NetworkBehaviour
     private Renderer sphereRenderer;
     private Collider sphereCollider;
     private Transform targetPlayer;
+    private Color originalPlayerColor = Color.white;
 
     private void Awake()
     {
@@ -58,9 +59,7 @@ public class StaminaSphere : NetworkBehaviour
 
     private IEnumerator WaitAndAbsorbParticles()
     {
-        // Wait a frame to let particles spawn
         yield return null;
-        // Optionally, wait longer if needed
         yield return new WaitForSeconds(.5f);
         yield return StartCoroutine(AbsorbParticlesCoroutine());
     }
@@ -77,9 +76,8 @@ public class StaminaSphere : NetworkBehaviour
         float[] elapsedTimes = new float[count];
         bool[] fading = new bool[count];
         float[] fadeTimes = new float[count];
-        float fadeDuration = 0.3f; // How long to fade after contact
+        float fadeDuration = 0.3f;
 
-        // Set up random durations for each particle
         float minDuration = 0.2f;
         float maxDuration = 1.0f;
         for (int i = 0; i < count; i++)
@@ -91,9 +89,23 @@ public class StaminaSphere : NetworkBehaviour
             fadeTimes[i] = 0f;
         }
 
-        // Get player renderer and original color
         Renderer playerRenderer = targetPlayer.GetComponentInChildren<MeshRenderer>();
-        Color originalColor = playerRenderer.material.color;
+        if (playerRenderer == null)
+            yield break;
+
+        // Capture the original material color before tinting
+        MaterialPropertyBlock originalBlock = new MaterialPropertyBlock();
+        playerRenderer.GetPropertyBlock(originalBlock);
+        originalPlayerColor = originalBlock.GetColor("_BaseColor");
+        if (originalPlayerColor == Color.black)
+        {
+            originalPlayerColor = originalBlock.GetColor("_Color");
+        }
+        if (originalPlayerColor == Color.black)
+        {
+            originalPlayerColor = Color.white;
+        }
+
         int yellowSteps = 0;
         float tintAmountPerStep = 1f / Mathf.Max(1, count);
 
@@ -106,7 +118,6 @@ public class StaminaSphere : NetworkBehaviour
 
         while (finishedCount < count)
         {
-            // Update target position in case player moves
             Vector3 currentTargetPosition = targetPlayer.position + Vector3.up * 0.25f;
             if (explosionParticles.main.simulationSpace == ParticleSystemSimulationSpace.Local)
             {
@@ -117,7 +128,6 @@ public class StaminaSphere : NetworkBehaviour
             {
                 if (fading[i])
                 {
-                    // Fade out after contact
                     fadeTimes[i] += Time.deltaTime;
                     float fadeT = Mathf.Clamp01(fadeTimes[i] / fadeDuration);
                     particles[i].startColor = new Color32(
@@ -128,24 +138,22 @@ public class StaminaSphere : NetworkBehaviour
                     );
                     if (fadeT >= 1f)
                     {
-                        fading[i] = false; // Mark as finished
+                        fading[i] = false;
                         finishedCount++;
                     }
                     continue;
                 }
 
-                // Move particle toward player
                 elapsedTimes[i] += Time.deltaTime;
                 float t = Mathf.Clamp01(elapsedTimes[i] / durations[i]);
                 particles[i].position = Vector3.Lerp(initialPositions[i], currentTargetPosition, t);
 
-                // Check if close enough to start fading
                 if (Vector3.Distance(particles[i].position, currentTargetPosition) < 0.05f)
                 {
                     fading[i] = true;
                     fadeTimes[i] = 0f;
                     yellowSteps++;
-                    StartCoroutine(TintPlayerYellowCoroutine(playerRenderer, originalColor, yellowSteps, tintAmountPerStep, 2f));
+                    StartCoroutine(TintPlayerYellowCoroutine(playerRenderer, yellowSteps, tintAmountPerStep, 2f));
                 }
             }
 
@@ -155,20 +163,41 @@ public class StaminaSphere : NetworkBehaviour
 
         explosionParticles.Clear();
     }
-    private IEnumerator TintPlayerYellowCoroutine(Renderer playerRenderer, Color originalColor, int steps, float tintAmountPerStep, float revertDuration)
+
+    private IEnumerator TintPlayerYellowCoroutine(Renderer playerRenderer, int steps, float tintAmountPerStep, float revertDuration)
     {
-        Color yellow = Color.yellow;
-        Color targetColor = Color.Lerp(originalColor, yellow, tintAmountPerStep * steps);
-        playerRenderer.material.color = targetColor;
+        if (playerRenderer == null)
+            yield break;
+
+        // Use MaterialPropertyBlock to bypass material overrides and communicate directly with GPU
+        MaterialPropertyBlock materialBlock = new MaterialPropertyBlock();
+
+        Color targetTint = Color.Lerp(originalPlayerColor, Color.yellow, tintAmountPerStep * steps);
+
+        Debug.Log($"Tinting player with MaterialPropertyBlock. Target color: {targetTint}");
+
+        // Apply tint via MaterialPropertyBlock
+        materialBlock.SetColor("_Color", targetTint);
+        materialBlock.SetColor("_BaseColor", targetTint);
+        materialBlock.SetColor("_Tint", targetTint);
+        playerRenderer.SetPropertyBlock(materialBlock);
 
         float elapsed = 0f;
         while (elapsed < revertDuration)
         {
             elapsed += Time.deltaTime;
-            playerRenderer.material.color = Color.Lerp(targetColor, originalColor, elapsed / revertDuration);
+            Color lerpedTint = Color.Lerp(targetTint, originalPlayerColor, elapsed / revertDuration);
+
+            materialBlock.SetColor("_Color", lerpedTint);
+            materialBlock.SetColor("_BaseColor", lerpedTint);
+            materialBlock.SetColor("_Tint", lerpedTint);
+            playerRenderer.SetPropertyBlock(materialBlock);
+
             yield return null;
         }
-        playerRenderer.material.color = originalColor;
+
+        // Clear the property block to restore defaults
+        playerRenderer.SetPropertyBlock(null);
     }
 
     private IEnumerator RespawnCoroutine()
@@ -179,7 +208,6 @@ public class StaminaSphere : NetworkBehaviour
 
         yield return new WaitForSeconds(respawnDelay);
 
-        // Reattach explosion if needed
         if (explosionParticles != null && explosionParticles.transform.parent == null)
         {
             explosionParticles.transform.SetParent(transform);

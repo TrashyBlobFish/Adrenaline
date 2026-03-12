@@ -343,115 +343,84 @@ public class PlayerMovement : NetworkBehaviour
 
     private void HandleTrip()
     {
+        Debug.Log("=== TRIP ATTEMPT STARTED ===");
         lastTripTime = Time.time;
-        Debug.Log("=== TRIP ATTEMPT DEBUG ===");
-        Debug.Log($"This object: {gameObject.name}, Parent: {transform.parent?.name}");
-        Debug.Log($"Attempting to trip from position: {transform.position}");
-        Debug.Log($"Trip range: {tripRange}");
-        Debug.Log($"Player LayerMask: {playerLayerMask.value}");
-        
-        // Use the root NetworkObject's position if this is a child
-        Vector3 searchPosition = rootNetworkObject != null ? rootNetworkObject.transform.position : transform.position;
-        searchPosition += Vector3.up * 0.5f; // Slightly elevated
-        
-        Debug.Log($"Search position: {searchPosition}");
-        
-        // Find nearby players within trip range
-        Collider[] nearbyColliders = Physics.OverlapSphere(searchPosition, tripRange, playerLayerMask);
-        Debug.Log($"OverlapSphere found {nearbyColliders.Length} colliders");
-        
-        // Also try without layer mask for debugging
-        Collider[] allColliders = Physics.OverlapSphere(searchPosition, tripRange);
-        Debug.Log($"OverlapSphere without layer mask found {allColliders.Length} total colliders");
-        
-        // Debug all found objects
-        foreach (Collider collider in allColliders)
+
+        Vector3 searchPosition = transform.position + Vector3.up * 0.5f;
+        Debug.Log($"Trip search position: {searchPosition}, tripRange: {tripRange}");
+
+        Collider[] nearbyColliders = Physics.OverlapSphere(searchPosition, tripRange);
+        Debug.Log($"[COLLISION DETECTION] OverlapSphere found {nearbyColliders.Length} colliders at position {searchPosition}");
+
+        if (nearbyColliders.Length == 0)
         {
-            Debug.Log($"Found: '{collider.name}' (Parent: '{collider.transform.parent?.name}') Layer: {collider.gameObject.layer} Tag: '{collider.tag}'");
-            
-            // Check if this collider or its parent has PlayerMovement
-            PlayerMovement playerMovement = collider.GetComponent<PlayerMovement>();
-            if (playerMovement == null)
-                playerMovement = collider.GetComponentInParent<PlayerMovement>();
-            if (playerMovement == null)
-                playerMovement = collider.GetComponentInChildren<PlayerMovement>();
-                
-            if (playerMovement != null)
-                Debug.Log($"  -> Has PlayerMovement: {playerMovement.name}, IsOwner: {playerMovement.IsOwner}");
+            Debug.LogWarning("[COLLISION DETECTION] No colliders detected in trip range!");
+            return;
         }
-        
+
         foreach (Collider collider in nearbyColliders)
         {
-            Debug.Log($"Processing collider with correct layer: {collider.name}");
-            
-            // Try multiple ways to find the PlayerMovement component
-            PlayerMovement targetPlayer = null;
-            
-            // Method 1: Direct component
-            targetPlayer = collider.GetComponent<PlayerMovement>();
-            
-            // Method 2: Check parent
+            Debug.Log($"[COLLIDER CHECK] Processing collider: {collider.gameObject.name}, Type: {collider.GetType().Name}");
+
+            PlayerMovement targetPlayer = collider.GetComponent<PlayerMovement>();
+            Debug.Log($"[PLAYERMOVEMENT SEARCH] GetComponent result: {(targetPlayer != null ? targetPlayer.gameObject.name : "null")}");
+
             if (targetPlayer == null)
+            {
                 targetPlayer = collider.GetComponentInParent<PlayerMovement>();
-                
-            // Method 3: Check children
+                Debug.Log($"[PLAYERMOVEMENT SEARCH] GetComponentInParent result: {(targetPlayer != null ? targetPlayer.gameObject.name : "null")}");
+            }
+
             if (targetPlayer == null)
+            {
                 targetPlayer = collider.GetComponentInChildren<PlayerMovement>();
-            
-            // Method 4: Check if collider has Player tag and search for PlayerMovement in hierarchy
-            if (targetPlayer == null && collider.CompareTag("Player"))
-            {
-                // Look for PlayerMovement in the root NetworkObject
-                var networkObj = collider.GetComponentInParent<NetworkObject>();
-                if (networkObj != null)
-                    targetPlayer = networkObj.GetComponentInChildren<PlayerMovement>();
+                Debug.Log($"[PLAYERMOVEMENT SEARCH] GetComponentInChildren result: {(targetPlayer != null ? targetPlayer.gameObject.name : "null")}");
             }
-            
-            Debug.Log($"PlayerMovement search result: {(targetPlayer != null ? targetPlayer.name : "null")}");
-            
-            if (targetPlayer != null && !targetPlayer.IsOwner && targetPlayer != this)
+
+            if (targetPlayer == null)
             {
-                // Use the NetworkObject's position for direction calculation
-                Vector3 targetPosition = targetPlayer.rootNetworkObject != null ? 
-                    targetPlayer.rootNetworkObject.transform.position : targetPlayer.transform.position;
-                Vector3 sourcePosition = rootNetworkObject != null ? 
-                    rootNetworkObject.transform.position : transform.position;
-                    
-                Vector3 directionToTarget = (targetPosition - sourcePosition).normalized;
-                float dotProduct = Vector3.Dot(transform.forward, directionToTarget);
-                
-                Debug.Log($"Target direction dot product: {dotProduct}, Target IsGrounded: {targetPlayer.isGrounded}")
-;
-                if (dotProduct > 0.5f && targetPlayer.isGrounded) // 60 degree cone in front
-                {
-                    // Calculate launch vector
-                    Vector3 launchDirection = directionToTarget;
-                    launchDirection.y = 0;
-                    launchDirection = launchDirection.normalized;
-                    
-                    Vector3 tripLaunchVector = launchDirection * tripForwardForce + Vector3.up * tripUpwardForce;
-                    
-                    // Request trip on server
-                    RequestTripPlayerServerRpc(targetPlayer.NetworkObjectId, tripLaunchVector);
-                    
-                    Debug.Log($"SUCCESS: Tripped player: {targetPlayer.name} with force: {tripLaunchVector}");
-                    break; // Only trip one player at a time
-                }
-                else
-                {
-                    Debug.Log($"Target failed conditions - DotProduct: {dotProduct} (need > 0.5), IsGrounded: {targetPlayer.isGrounded}");
-                }
+                Debug.Log($"[VALIDATION FAILED] No PlayerMovement component found on {collider.gameObject.name}");
+                continue;
             }
-            else if (targetPlayer == null)
+
+            Debug.Log($"[FOUND TARGET] PlayerMovement found: {targetPlayer.gameObject.name}");
+            Debug.Log($"[OWNERSHIP CHECK] targetPlayer.IsOwner: {targetPlayer.IsOwner}, this player IsOwner: {IsOwner}");
+            Debug.Log($"[SELF CHECK] targetPlayer == this: {targetPlayer == this}");
+
+            if (targetPlayer.IsOwner)
             {
-                Debug.Log($"No PlayerMovement found on collider: {collider.name}");
+                Debug.Log($"[VALIDATION FAILED] Target {targetPlayer.gameObject.name} is owned by player, skipping");
+                continue;
             }
-            else
+
+            if (targetPlayer == this)
             {
-                Debug.Log($"Skipped target - IsOwner: {targetPlayer?.IsOwner}, Same object: {targetPlayer == this}");
+                Debug.Log($"[VALIDATION FAILED] Target is self, skipping");
+                continue;
             }
+
+            // Get direction to target
+            Vector3 targetPosition = targetPlayer.transform.position;
+            Vector3 sourcePosition = transform.position;
+
+            Debug.Log($"[DIRECTION CALCULATION] Source: {sourcePosition}, Target: {targetPosition}");
+
+            Vector3 directionToTarget = (targetPosition - sourcePosition).normalized;
+            Debug.Log($"[TARGET FOUND] Target in range: {targetPlayer.gameObject.name}");
+
+            // Apply trip - no additional checks needed
+            Vector3 launchDirection = directionToTarget;
+            launchDirection.y = 0;
+            launchDirection = launchDirection.normalized;
+
+            Vector3 tripLaunchVector = launchDirection * tripForwardForce + Vector3.up * tripUpwardForce;
+            Debug.Log($"[RPC CALL] Calling RequestTripPlayerServerRpc with launchVector: {tripLaunchVector}");
+            RequestTripPlayerServerRpc(targetPlayer.NetworkObjectId, tripLaunchVector);
+            Debug.Log("[TRIP EXECUTED] Trip successful!");
+            break;
         }
-        Debug.Log("=== END TRIP DEBUG ===");
+
+        Debug.Log("=== TRIP ATTEMPT ENDED ===");
     }
 
     //intilizes timer when bat is held
@@ -546,20 +515,22 @@ public class PlayerMovement : NetworkBehaviour
 
     private IEnumerator TripRoutine(float duration)
     {
-        // Briefly disable control during trip
+        // Allow free rotation and disable control (match bat launch)
+        rb.constraints = RigidbodyConstraints.None;
         canControl = false;
         Launched = true;
 
-        // Add slight rotation for trip effect
+        // Add random angular velocity for trip effect (match bat launch)
         rb.angularVelocity = new Vector3(
-            Random.Range(-5f, 5f),
-            0f,
-            Random.Range(-5f, 5f)
+            Random.Range(-10f, 10f),
+            Random.Range(-10f, 10f),
+            Random.Range(-10f, 10f)
         );
 
         yield return new WaitForSeconds(duration);
 
-        // Restore control
+        // Restore constraints and control (match bat launch)
+        rb.constraints = defaultConstraints;
         canControl = true;
         Launched = false;
         rb.angularVelocity = Vector3.zero;
