@@ -7,16 +7,16 @@ public class LoadMap : NetworkBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        // Only the server should react to collisions for scene loading
-        if (!IsServer) return;
         
+        if (!IsOwnedByServer) return;
+        Debug.Log("Collision detected with: hopfully player");
         if (collision.gameObject.CompareTag("Player"))
         {
             NetworkObject netObj = collision.gameObject.GetComponentInParent<NetworkObject>();
-            if (netObj != null && netObj.IsOwner && netObj.IsOwnedByServer)
+            if (netObj != null && netObj.IsOwner)
             {
-                // Host player touched it -> load scene
-                GetComponent<NetworkChangeScenes>().ChangeScene(selectedMap);
+                // Player (any owner) touched it -> load scene
+                gameObject.GetComponent<NetworkChangeScenes>().ChangeScene(selectedMap);
             }
         }
     }

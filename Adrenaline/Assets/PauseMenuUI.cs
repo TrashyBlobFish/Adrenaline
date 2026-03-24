@@ -8,7 +8,7 @@ public class PauseMenuUI : MonoBehaviour
     [SerializeField] private GameObject pausePanel;
     [SerializeField] private Button returnToLobbyButton;
     private NetworkChangeScenes sceneChanger;
-    private bool isMenuOpen = false;
+    public bool isMenuOpen = false;
 
     void Start()
     {
