@@ -2,11 +2,11 @@ using UnityEngine;
 
 public class Glass : MonoBehaviour
 {
-    [Header("Assign your particle system here")]
     public ParticleSystem hitParticles;
 
     private BoxCollider objCollider;
     private MeshRenderer meshRenderer;
+    private bool isDestroyed = false;
 
     void Awake()
     {
@@ -21,40 +21,64 @@ public class Glass : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.collider.CompareTag("Shield"))
+        if (collision.collider.CompareTag("Shield") && !isDestroyed)
         {
-            HandleShieldHit();
+            HandleShieldHit(collision.transform);
         }
     }
     
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("Shield"))
+        if (other.gameObject.CompareTag("Shield") && !isDestroyed)
         {
-            HandleShieldHit();
+            HandleShieldHit(other.transform);
         }
     }
 
-    private void HandleShieldHit()
+    private void HandleShieldHit(Transform contactTransform)
     {
-        // Remove mesh and collider
+        isDestroyed = true;
+
+        // Rotate particle system shape to face the contact object's forward direction
+        if (hitParticles != null)
+        {
+            var shape = hitParticles.shape;
+            Vector3 rotation = Quaternion.LookRotation(contactTransform.forward).eulerAngles;
+            rotation.y += -90f;
+            shape.rotation = rotation;
+        }
+
+        // Disable mesh and collider
         if (objCollider != null)
-            Destroy(objCollider);
+            objCollider.enabled = false;
 
         if (meshRenderer != null)
-            Destroy(meshRenderer);
+            meshRenderer.enabled = false;
 
         // Play particle effect
         if (hitParticles != null)
         {
             hitParticles.Play();
-            // Schedule destroy after particle lifetime
-            Destroy(gameObject, hitParticles.main.duration);
         }
-        else
-        {
-            // No particle assigned? Just destroy immediately
-            Destroy(gameObject);
-        }
+
+        // Schedule rebuild after 30 seconds
+        Invoke(nameof(RebuildGlass), 30f);
+    }
+
+    private void RebuildGlass()
+    {
+        isDestroyed = false;
+
+        // Re-enable mesh renderer
+        if (meshRenderer != null)
+            meshRenderer.enabled = true;
+
+        // Re-enable collider
+        if (objCollider != null)
+            objCollider.enabled = true;
+
+        // Stop particle effect
+        if (hitParticles != null)
+            hitParticles.Stop();
     }
 }
