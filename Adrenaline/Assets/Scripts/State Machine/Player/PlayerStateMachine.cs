@@ -38,7 +38,6 @@ public class PlayerStateMachine : NetworkBehaviour
             return;
         }
 
-
         currentState.UpdateState(this);
 
         Vector2 moveInput = movement.playerInput.actions["Move"].ReadValue<Vector2>();
@@ -86,6 +85,14 @@ public class PlayerStateMachine : NetworkBehaviour
         {
             SwitchState(runningState);
         }
+    }
+
+    private void FixedUpdate()
+    {
+        if (!rootNetworkObject.IsOwner)
+            return;
+
+        currentState.FixedUpdateState(this);
     }
 
     public void SwitchState(PlayerBaseState newState)

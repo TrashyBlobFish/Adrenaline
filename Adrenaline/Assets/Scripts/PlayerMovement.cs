@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -98,6 +97,8 @@ public class PlayerMovement : NetworkBehaviour
     public float tripLaunchDuration = 1f;
     private float lastTripTime = -10f;
     private bool tripInput;
+    [Header("Trip Particle Settings")]
+    public ParticleSystem tripParticleSystem;
 
     [Header("Sprint / Stamina Settings")]
     public Slider staminaSlider;
@@ -122,6 +123,8 @@ public class PlayerMovement : NetworkBehaviour
     );
 
     private UserProfileData userProfile;
+
+    private float targetRotation = 0f; // Store the target rotation
 
     void Awake()
     {
@@ -159,6 +162,9 @@ public class PlayerMovement : NetworkBehaviour
         rb = GetComponent<Rigidbody>();
         defaultConstraints = rb.constraints;
 
+        // Enable Rigidbody interpolation for smooth camera following
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
+
         if (playerCamera == null)
             playerCamera = Camera.main;
         if (GameUI == null)
@@ -173,6 +179,9 @@ public class PlayerMovement : NetworkBehaviour
         if (TrainAudioSource != null)
             trainInitialVolume = TrainAudioSource.volume;
 
+        // Setup particle system if not assigned
+        if (tripParticleSystem == null)
+            tripParticleSystem = GetComponentInChildren<ParticleSystem>();
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -183,6 +192,15 @@ public class PlayerMovement : NetworkBehaviour
             staminaSlider.maxValue = maxStamina;
             staminaSlider.value = maxStamina;
         }
+    }
+
+    private void FixedUpdate()
+    {
+        if (!rootNetworkObject.IsOwner)
+            return;
+
+        HandleMovement();
+        ApplyRotation();
     }
 
     void Update()
@@ -417,6 +435,9 @@ public class PlayerMovement : NetworkBehaviour
             Debug.Log($"[RPC CALL] Calling RequestTripPlayerServerRpc with launchVector: {tripLaunchVector}");
             RequestTripPlayerServerRpc(targetPlayer.NetworkObjectId, tripLaunchVector);
             Debug.Log("[TRIP EXECUTED] Trip successful!");
+            
+            // Play particle effect at target location
+            PlayTripParticlesClientRpc(targetPlayer.transform.position);
             break;
         }
 
@@ -447,10 +468,7 @@ public class PlayerMovement : NetworkBehaviour
         if (direction.magnitude >= 0.1f)
         {
             float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + playerCamera.transform.eulerAngles.y;
-            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
-
-            if (cameraSwitcher.isThirdPerson)
-                transform.rotation = Quaternion.Euler(0f, angle, 0f);
+            targetRotation = targetAngle; // Store rotation for FixedUpdate
 
             float speed = isSprinting ? sprintSpeed : runSpeed;
             Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
@@ -468,19 +486,37 @@ public class PlayerMovement : NetworkBehaviour
                 rb.linearVelocity = Vector3.MoveTowards(
                     rb.linearVelocity,
                     targetVelocity,
-                    acceleration * Time.deltaTime
+                    acceleration * Time.fixedDeltaTime
                 );
             }
         }
         else
         {
-            userProfile.TimeSpentAFK += Time.deltaTime;
+            userProfile.TimeSpentAFK += Time.fixedDeltaTime;
             Vector3 stopVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
             rb.linearVelocity = Vector3.MoveTowards(
                 rb.linearVelocity,
                 stopVelocity,
-                acceleration * Time.deltaTime
+                acceleration * Time.fixedDeltaTime
             );
+        }
+    }
+
+    private void ApplyRotation()
+    {
+        if (!canControl) return;
+        Vector2 input = playerInput.actions["Move"].ReadValue<Vector2>();
+        Vector3 direction = new Vector3(input.x, 0f, input.y).normalized;
+
+        if (direction.magnitude >= 0.1f && cameraSwitcher.isThirdPerson)
+        {
+            float angle = Mathf.SmoothDampAngle(
+                transform.eulerAngles.y,
+                targetRotation,
+                ref turnSmoothVelocity,
+                turnSmoothTime
+            );
+            rb.MoveRotation(Quaternion.Euler(0f, angle, 0f));
         }
     }
 
@@ -667,6 +703,16 @@ public class PlayerMovement : NetworkBehaviour
     public void ApplyTripClientRpc(Vector3 launchVector, float duration)
     {
         ApplyTrip(launchVector, duration);
+    }
+
+    [ClientRpc]
+    public void PlayTripParticlesClientRpc(Vector3 position)
+    {
+        if (tripParticleSystem != null)
+        {
+            tripParticleSystem.transform.position = position;
+            tripParticleSystem.Play();
+        }
     }
 
     // Visualization for trip range in editor

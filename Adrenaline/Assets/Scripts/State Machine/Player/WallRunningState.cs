@@ -34,7 +34,6 @@ public class WallRunningState : PlayerBaseState
         {
             player.SwitchState(player.runningState);
         }
-
     }
 
     public override void ExitState(PlayerStateMachine player)

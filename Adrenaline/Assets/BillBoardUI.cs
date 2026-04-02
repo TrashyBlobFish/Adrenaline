@@ -12,6 +12,7 @@ public class BillBoardUI : MonoBehaviour
     void Update()
     {
         FacePlayerHorizontally();
+        playerCamera = Camera.main;
     }
 
     private void FacePlayerHorizontally()
@@ -24,7 +25,8 @@ public class BillBoardUI : MonoBehaviour
 
         if (directionToPlayer.magnitude > 0.01f)
         {
-            transform.rotation = Quaternion.LookRotation(directionToPlayer);
+            Quaternion lookRotation = Quaternion.LookRotation(directionToPlayer);
+            transform.rotation = lookRotation * Quaternion.Euler(0, 180f, 0);
         }
     }
 }

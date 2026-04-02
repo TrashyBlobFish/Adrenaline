@@ -10632,6 +10632,7 @@ MonoBehaviour:
   TimeSpentAFK: 0
   Timespent3rdPerson: 0
   Timespent1stPerson: 0
+  PlayerID: Player
 --- !u!114 &1404117585
 MonoBehaviour:
   m_ObjectHideFlags: 0

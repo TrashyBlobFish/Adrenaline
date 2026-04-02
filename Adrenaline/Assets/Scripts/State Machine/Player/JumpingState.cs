@@ -23,9 +23,6 @@ public class JumpingState : PlayerBaseState
     {
         jumpTimer -= Time.deltaTime;
 
-        // While mid-air, keep some horizontal control
-        player.movement.HandleMovement();
-
         // Transition logic
         if (player.movement.isGrounded && jumpTimer <= 0f)
         {
@@ -39,6 +36,12 @@ public class JumpingState : PlayerBaseState
             else
                 player.SwitchState(player.runningState);
         }
+    }
+
+    public override void FixedUpdateState(PlayerStateMachine player)
+    {
+        // While mid-air, keep some horizontal control
+        player.movement.HandleMovement();
     }
 
     public override void ExitState(PlayerStateMachine player)

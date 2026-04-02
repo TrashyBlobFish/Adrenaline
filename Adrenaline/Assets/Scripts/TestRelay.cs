@@ -33,6 +33,7 @@ public class TestRelay : MonoBehaviour
     private void OnSignedIn()
     {
         Debug.Log("Signed in " + AuthenticationService.Instance.PlayerId);
+        GameObject.Find("GameManager").GetComponent<UserProfileData>().PlayerID = AuthenticationService.Instance.PlayerId;
     }
 
     private void OnDestroy()

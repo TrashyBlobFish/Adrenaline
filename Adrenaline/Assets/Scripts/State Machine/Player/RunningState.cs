@@ -9,12 +9,14 @@ public class RunningState : PlayerBaseState
 
     public override void UpdateState(PlayerStateMachine player)
     {
-        
-        player.movement.HandleMovement();
-
         // Regenerate stamina when not sprinting
         player.movement.currentStamina += player.movement.staminaRegenRate * Time.deltaTime;
         player.movement.currentStamina = Mathf.Min(player.movement.currentStamina, player.movement.maxStamina);
+    }
+
+    public override void FixedUpdateState(PlayerStateMachine player)
+    {
+        player.movement.HandleMovement();
     }
 
     public override void ExitState(PlayerStateMachine player) { }
