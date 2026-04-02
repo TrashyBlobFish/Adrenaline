@@ -1847,7 +1847,7 @@ MonoBehaviour:
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
   m_Cameras: []
-  m_RendererIndex: -1
+  m_RendererIndex: 0
   m_VolumeLayerMask:
     serializedVersion: 2
     m_Bits: 1
@@ -1929,7 +1929,6 @@ GameObject:
   - component: {fileID: 343201712387446925}
   - component: {fileID: 8827841730754944378}
   - component: {fileID: 2393782969225127159}
-  - component: {fileID: 1350931407052724373}
   m_Layer: 0
   m_Name: Trip Particle
   m_TagString: Untagged
@@ -1946,7 +1945,7 @@ Transform:
   m_GameObject: {fileID: 4847000928195468024}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
-  m_LocalPosition: {x: 0, y: -1.0490003, z: 0}
+  m_LocalPosition: {x: 0, y: -0.95002973, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6761,30 +6760,6 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
---- !u!114 &1350931407052724373
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4847000928195468024}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 557c435b885cc6041976f25d45b5d9d8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ShowTopMostFoldoutHeaderGroup: 1
-  SpeedLines: {fileID: 0}
-  sprintParticles: {fileID: 8827841730754944378}
-  playerMovement: {fileID: 707014016030725849}
-  minSpeedForParticles: 1
-  maxSpeedForMaxBurst: 20
-  minBurstCount: 1
-  maxBurstCount: 10
-  minBurstInterval: 0.5
-  maxBurstInterval: 0.05
-  speedLinesActivationSpeed: 17
-  syncInterval: 0.1
 --- !u!1 &5035562071849247766
 GameObject:
   m_ObjectHideFlags: 0

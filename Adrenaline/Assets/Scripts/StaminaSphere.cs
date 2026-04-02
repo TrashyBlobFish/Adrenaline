@@ -9,12 +9,14 @@ public class StaminaSphere : NetworkBehaviour
     [SerializeField] float respawnDelay = 15f;
     [SerializeField] private ParticleSystem explosionParticles;
     [SerializeField] private ParticleSystem internalParticles;
+    [SerializeField] private Material fullscreenShaderMaterial;
 
     private Light sphereLight;
     private Renderer sphereRenderer;
     private Collider sphereCollider;
     private Transform targetPlayer;
     private Color originalPlayerColor = Color.white;
+    private Material fullscreenShaderInstance;
 
     private void Awake()
     {
@@ -27,22 +29,23 @@ public class StaminaSphere : NetworkBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            if (other.GetComponentInChildren<PlayerMovement>().cameraSwitcher.isThirdPerson)
+            PlayerMovement movement = other.GetComponentInChildren<PlayerMovement>();
+            if (movement == null)
+                return;
+
+            NetworkObject playerNetworkObject = movement.GetComponentInParent<NetworkObject>();
+            if (playerNetworkObject == null)
+                return;
+
+            if (!playerNetworkObject.IsOwner)
+                return;
+
+            movement.currentStamina += StaminaRegained;
+
+            if (movement.cameraSwitcher.isThirdPerson)
             {
                 internalParticles.Stop();
                 internalParticles.Clear();
-                PlayerMovement movement = other.GetComponentInChildren<PlayerMovement>();
-                if (movement == null)
-                    return;
-
-                NetworkObject playerNetworkObject = movement.GetComponentInParent<NetworkObject>();
-                if (playerNetworkObject == null)
-                    return;
-
-                if (!playerNetworkObject.IsOwner)
-                    return;
-
-                movement.currentStamina += StaminaRegained;
 
                 if (explosionParticles != null)
                 {
@@ -51,10 +54,71 @@ public class StaminaSphere : NetworkBehaviour
                     targetPlayer = other.transform;
                     StartCoroutine(WaitAndAbsorbParticles());
                 }
-
-                CollectServerRpc();
             }
+            else
+            {
+                // First-person mode: apply fullscreen shader effect
+                StartCoroutine(ApplyFirstPersonShaderEffectCoroutine(movement.playerCamera));
+            }
+
+            CollectServerRpc();
         }
+    }
+
+    private IEnumerator ApplyFirstPersonShaderEffectCoroutine(Camera playerCamera)
+    {
+        if (fullscreenShaderMaterial == null)
+        {
+            Debug.LogWarning("Fullscreen shader material not assigned to StaminaSphere");
+            yield break;
+        }
+
+        // Create an instance of the material to avoid modifying the shared material
+        fullscreenShaderInstance = new Material(fullscreenShaderMaterial);
+
+        const float intensityStart = 30f;
+        const float intensityEnd = 1.25f;
+        const float transitionDuration = 0.25f;
+        const float holdDuration = 1f;
+        const float reverseDuration = 0.25f;
+
+        // Phase 1: Intensity transition from 30 to 1.25 over 0.25 seconds
+        float elapsed = 0f;
+        while (elapsed < transitionDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / transitionDuration);
+            float intensity = Mathf.Lerp(intensityStart, intensityEnd, t);
+
+            fullscreenShaderInstance.SetFloat("_Intensity", intensity);
+            fullscreenShaderInstance.SetColor("_Color", Color.yellow);
+
+            yield return null;
+        }
+
+        // Ensure we end at exact value
+        fullscreenShaderInstance.SetFloat("_Intensity", intensityEnd);
+
+        // Phase 2: Hold the effect for 1 second
+        yield return new WaitForSeconds(holdDuration);
+
+        // Phase 3: Reverse the effect (1.25 back to 0) over 0.25 seconds
+        elapsed = 0f;
+        while (elapsed < reverseDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / reverseDuration);
+            float intensity = Mathf.Lerp(intensityEnd, 0f, t);
+
+            fullscreenShaderInstance.SetFloat("_Intensity", intensity);
+            fullscreenShaderInstance.SetColor("_Color", Color.yellow);
+
+            yield return null;
+        }
+
+        // Clean up the instance material
+        Destroy(fullscreenShaderInstance);
+        fullscreenShaderInstance = null;
     }
 
     private IEnumerator WaitAndAbsorbParticles()
@@ -89,7 +153,7 @@ public class StaminaSphere : NetworkBehaviour
             fadeTimes[i] = 0f;
         }
 
-        Renderer playerRenderer = targetPlayer.GetComponentInChildren<MeshRenderer>();
+        Renderer playerRenderer = targetPlayer.GetComponentInChildren<SkinnedMeshRenderer>();
         if (playerRenderer == null)
             yield break;
 
