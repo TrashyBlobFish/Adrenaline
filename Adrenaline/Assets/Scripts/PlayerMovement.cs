@@ -260,6 +260,8 @@ public class PlayerMovement : NetworkBehaviour
         // Handle trip input
         if (tripInput && Time.time - lastTripTime > tripCooldown && isGrounded)
         {
+            // Play particle effect at target location
+            PlayTripParticlesClientRpc(tripParticleSystem.transform.position);
             HandleTrip();
             Debug.Log("Trip input detected");
         }
@@ -436,8 +438,7 @@ public class PlayerMovement : NetworkBehaviour
             RequestTripPlayerServerRpc(targetPlayer.NetworkObjectId, tripLaunchVector);
             Debug.Log("[TRIP EXECUTED] Trip successful!");
             
-            // Play particle effect at target location
-            PlayTripParticlesClientRpc(targetPlayer.transform.position);
+            
             break;
         }
 
