@@ -57,14 +57,26 @@ public class SpeedSphere : MonoBehaviour
         playerMove.runSpeed += speedGained;
         playerMove.sprintSpeed += speedGained;
 
-        // Apply green effect to player mesh
+        // Apply green effect to player mesh (MaterialPropertyBlock, like StaminaSphere)
         Renderer playerRenderer = playerMove.GetComponentInChildren<MeshRenderer>();
         Color originalColor = Color.white;
+        MaterialPropertyBlock materialBlock = null;
 
-        if (playerRenderer != null && playerRenderer.material != null)
+        if (playerRenderer != null)
         {
-            originalColor = playerRenderer.material.color;
-            playerRenderer.material.color = Color.green;
+            materialBlock = new MaterialPropertyBlock();
+            playerRenderer.GetPropertyBlock(materialBlock);
+
+            originalColor = materialBlock.GetColor("_BaseColor");
+            if (originalColor == Color.black)
+                originalColor = materialBlock.GetColor("_Color");
+            if (originalColor == Color.black)
+                originalColor = Color.white;
+
+            materialBlock.SetColor("_Color", Color.green);
+            materialBlock.SetColor("_BaseColor", Color.green);
+            materialBlock.SetColor("_Tint", Color.green);
+            playerRenderer.SetPropertyBlock(materialBlock);
         }
 
         // Wait for duration minus flicker time
@@ -87,18 +99,27 @@ public class SpeedSphere : MonoBehaviour
             float flickerFrequency = Mathf.Lerp(2f, 8f, normalizedTime);
             float flickerValue = (Mathf.Sin(flickerElapsed * flickerFrequency * Mathf.PI) + 1f) / 2f;
 
-            if (playerRenderer != null && playerRenderer.material != null)
+            if (playerRenderer != null && materialBlock != null)
             {
-                playerRenderer.material.color = Color.Lerp(originalColor, Color.green, Mathf.Lerp(1f, 0f, normalizedTime) * flickerValue);
+                Color flickerColor = Color.Lerp(
+                    originalColor,
+                    Color.green,
+                    Mathf.Lerp(1f, 0f, normalizedTime) * flickerValue
+                );
+
+                materialBlock.SetColor("_Color", flickerColor);
+                materialBlock.SetColor("_BaseColor", flickerColor);
+                materialBlock.SetColor("_Tint", flickerColor);
+                playerRenderer.SetPropertyBlock(materialBlock);
             }
 
             yield return null;
         }
 
         // Restore original color completely
-        if (playerRenderer != null && playerRenderer.material != null)
+        if (playerRenderer != null)
         {
-            playerRenderer.material.color = originalColor;
+            playerRenderer.SetPropertyBlock(null);
         }
 
         // Revert speed boost
@@ -113,6 +134,7 @@ public class SpeedSphere : MonoBehaviour
         sphereRenderer.enabled = true;
         sphereCollider.enabled = true;
     }
+
     private Transform FindChildRecursive(Transform parent, string childName)
     {
         foreach (Transform child in parent)
