@@ -1,16 +1,22 @@
-using UnityEngine;
-using Unity.Services.Core;
-using Unity.Services.Authentication;
-using Unity.Services.Relay;
-using Unity.Services.Relay.Models;
-using Unity.Netcode;
 using TMPro;
+using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using Unity.Networking.Transport.Relay;
+using Unity.Services.Authentication;
+using Unity.Services.Core;
+using Unity.Services.Relay;
+using Unity.Services.Relay.Models;
+using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 
 public class TestRelay : MonoBehaviour
 {
+    //Audio
+    public AudioMixerSnapshot startScreenSnapshot;
+    public AudioMixerSnapshot gameplaySnapshot;
+
+    //UI
     public TextMeshProUGUI LobbyText;
     public TextMeshProUGUI JoinCodeUI;
     public GameObject NetworkManagerUI;
@@ -19,6 +25,8 @@ public class TestRelay : MonoBehaviour
 
     private async void Start()
     {
+        Invoke("SetStartSnapshot", 0.1f);
+
         await UnityServices.InitializeAsync();
 
         AuthenticationService.Instance.SignedIn += OnSignedIn;
@@ -28,6 +36,11 @@ public class TestRelay : MonoBehaviour
         {
             NetworkManager.Singleton.OnClientDisconnectCallback += HandleClientDisconnect;
         }
+    }
+    //Audio Snapshot
+    void SetStartSnapshot()
+    {
+        startScreenSnapshot.TransitionTo(0f);
     }
 
     private void OnSignedIn()
@@ -93,6 +106,7 @@ public class TestRelay : MonoBehaviour
         {
             disconnectUI.SetActive(true);
         }
+        startScreenSnapshot.TransitionTo(0f);
     }
 
     public async void CreateRelay()
@@ -130,6 +144,7 @@ public class TestRelay : MonoBehaviour
             if (NetworkManager.Singleton.IsServer)
             {
                 NetworkManager.Singleton.SceneManager.LoadScene("Lobby", LoadSceneMode.Single);
+                gameplaySnapshot.TransitionTo(0f);
             }
         }
         catch (RelayServiceException e)
@@ -176,7 +191,7 @@ public class TestRelay : MonoBehaviour
             {
                 NetworkManagerUI.SetActive(false);
             }
-
+            gameplaySnapshot.TransitionTo(1f);
             // DO NOT call SceneManager.LoadScene here for clients.
             // The server/host will move everyone with NetworkSceneManager.
         }
