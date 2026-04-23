@@ -185,10 +185,7 @@ public sealed class MenuCameraSwitcher : MonoBehaviour
             return false;
         }
 
-        cameraPosition = knotCount > 1
-            ? pointIndex / (float)(knotCount - 1)
-            : 0f;
-
+        cameraPosition = pointIndex;
         return true;
     }
 }

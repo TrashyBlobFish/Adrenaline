@@ -3,6 +3,7 @@ using UnityEngine;
 public class Glass : MonoBehaviour
 {
     public ParticleSystem hitParticles;
+    public AudioSource hitAudioSource;
 
     private BoxCollider objCollider;
     private MeshRenderer meshRenderer;
@@ -13,6 +14,11 @@ public class Glass : MonoBehaviour
         // Cache components for performance
         objCollider = GetComponent<BoxCollider>();
         meshRenderer = GetComponent<MeshRenderer>();
+
+        if (hitAudioSource == null)
+        {
+            hitAudioSource = GetComponent<AudioSource>();
+        }
 
         // Ensure particle system is not playing at start
         if (hitParticles != null)
@@ -26,7 +32,7 @@ public class Glass : MonoBehaviour
             HandleShieldHit(collision.transform);
         }
     }
-    
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Shield") && !isDestroyed)
@@ -46,6 +52,12 @@ public class Glass : MonoBehaviour
             Vector3 rotation = Quaternion.LookRotation(contactTransform.forward).eulerAngles;
             rotation.y += -90f;
             shape.rotation = rotation;
+        }
+
+        // Play audio effect
+        if (hitAudioSource != null)
+        {
+            hitAudioSource.Play();
         }
 
         // Disable mesh and collider
