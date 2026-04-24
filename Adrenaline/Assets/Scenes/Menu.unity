@@ -5499,13 +5499,13 @@ MonoBehaviour:
       - m_Target: {fileID: 163038902}
         m_TargetAssemblyTypeName: TestRelay, Assembly-CSharp
         m_MethodName: CreateRelay
-        m_Mode: 1
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument: Lobby
           m_BoolArgument: 1
         m_CallState: 2
 --- !u!114 &871263449
@@ -16542,16 +16542,16 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1880358147}
-        m_TargetAssemblyTypeName: ManualStart, Assembly-CSharp
-        m_MethodName: ManualyStartGame
-        m_Mode: 1
+      - m_Target: {fileID: 163038902}
+        m_TargetAssemblyTypeName: TestRelay, Assembly-CSharp
+        m_MethodName: CreateRelay
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument: Tutorial
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 1880358142}
@@ -16564,18 +16564,6 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1880358148}
-        m_TargetAssemblyTypeName: ChangeScenes, Assembly-CSharp
-        m_MethodName: ChangeScene
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: Tutorial
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1880358145

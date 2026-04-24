@@ -25,8 +25,6 @@ public class TestRelay : MonoBehaviour
 
     private async void Start()
     {
-        Invoke("SetStartSnapshot", 0.1f);
-
         await UnityServices.InitializeAsync();
 
         AuthenticationService.Instance.SignedIn += OnSignedIn;
@@ -36,22 +34,38 @@ public class TestRelay : MonoBehaviour
         {
             NetworkManager.Singleton.OnClientDisconnectCallback += HandleClientDisconnect;
         }
+
+        SetStartSnapshot();
     }
-    //Audio Snapshot
+
     void SetStartSnapshot()
     {
-        startScreenSnapshot.TransitionTo(0f);
+        if (startScreenSnapshot != null)
+        {
+            startScreenSnapshot.TransitionTo(0f);
+        }
     }
 
     private void OnSignedIn()
     {
         Debug.Log("Signed in " + AuthenticationService.Instance.PlayerId);
-        GameObject.Find("GameManager").GetComponent<UserProfileData>().PlayerID = AuthenticationService.Instance.PlayerId;
+        GameObject gameManager = GameObject.Find("GameManager");
+        if (gameManager != null)
+        {
+            UserProfileData profileData = gameManager.GetComponent<UserProfileData>();
+            if (profileData != null)
+            {
+                profileData.PlayerID = AuthenticationService.Instance.PlayerId;
+            }
+        }
     }
 
     private void OnDestroy()
     {
-        AuthenticationService.Instance.SignedIn -= OnSignedIn;
+        if (AuthenticationService.Instance != null)
+        {
+            AuthenticationService.Instance.SignedIn -= OnSignedIn;
+        }
 
         if (NetworkManager.Singleton != null)
         {
@@ -80,36 +94,15 @@ public class TestRelay : MonoBehaviour
             await System.Threading.Tasks.Task.Delay(500);
         }
 
-        if (AuthenticationService.Instance.IsSignedIn)
+        if (AuthenticationService.Instance != null && AuthenticationService.Instance.IsSignedIn)
         {
             AuthenticationService.Instance.SignOut();
         }
 
-        // Use regular SceneManager to go back to non-networked menu
         SceneManager.LoadScene("Menu");
-
-        await System.Threading.Tasks.Task.Delay(500);
-        ShowDisconnectedUI();
     }
 
-    private void ShowDisconnectedUI()
-    {
-        GameObject menuUI = GameObject.Find("MenuUI");
-        GameObject disconnectUI = GameObject.Find("DiscconectedUI");
-
-        if (menuUI != null)
-        {
-            menuUI.SetActive(false);
-        }
-
-        if (disconnectUI != null)
-        {
-            disconnectUI.SetActive(true);
-        }
-        startScreenSnapshot.TransitionTo(0f);
-    }
-
-    public async void CreateRelay()
+    public async void CreateRelay(string startScene = "Lobby")
     {
         try
         {
@@ -132,7 +125,6 @@ public class TestRelay : MonoBehaviour
             UnityTransport transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
             transport.SetRelayServerData(relayServerData);
 
-            // Start as host (server)
             NetworkManager.Singleton.StartHost();
 
             if (NetworkManagerUI != null)
@@ -140,11 +132,13 @@ public class TestRelay : MonoBehaviour
                 NetworkManagerUI.SetActive(false);
             }
 
-            // IMPORTANT: use NetworkSceneManager from the host
             if (NetworkManager.Singleton.IsServer)
             {
-                NetworkManager.Singleton.SceneManager.LoadScene("Lobby", LoadSceneMode.Single);
-                gameplaySnapshot.TransitionTo(0f);
+                NetworkManager.Singleton.SceneManager.LoadScene(startScene, LoadSceneMode.Single);
+                if (gameplaySnapshot != null)
+                {
+                    gameplaySnapshot.TransitionTo(0f);
+                }
             }
         }
         catch (RelayServiceException e)
@@ -165,7 +159,6 @@ public class TestRelay : MonoBehaviour
             {
                 LobbyText.text = "Enter a code first!";
             }
-
             return;
         }
 
@@ -184,16 +177,17 @@ public class TestRelay : MonoBehaviour
             UnityTransport transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
             transport.SetRelayServerData(relayServerData);
 
-            // Join as client; let host handle scene changes
             NetworkManager.Singleton.StartClient();
 
             if (NetworkManagerUI != null)
             {
                 NetworkManagerUI.SetActive(false);
             }
-            gameplaySnapshot.TransitionTo(1f);
-            // DO NOT call SceneManager.LoadScene here for clients.
-            // The server/host will move everyone with NetworkSceneManager.
+
+            if (gameplaySnapshot != null)
+            {
+                gameplaySnapshot.TransitionTo(1f);
+            }
         }
         catch (RelayServiceException e)
         {
