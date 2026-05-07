@@ -11,25 +11,231 @@ ModelImporter:
     materialLocation: 1
   animations:
     legacyGenerateAnimations: 4
-    bakeSimulation: 0
+    bakeSimulation: 1
     resampleCurves: 1
     optimizeGameObjects: 0
     removeConstantScaleCurves: 0
     motionNodeName: 
     animationImportErrors: 
-    animationImportWarnings: 
+    animationImportWarnings: "\nClip 'Take 001' has import animation warnings that
+      might lower retargeting quality:\nNote: Activate translation DOF on avatar
+      to improve retargeting quality.\n\t'joint3' has translation animation that
+      will be discarded.\n\t'joint4' has translation animation that will be discarded.\n"
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
-    importConstraints: 0
-    animationCompression: 1
+    importConstraints: 1
+    animationCompression: 3
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
     extraUserProperties: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Idle
+      takeName: Take 001
+      internalID: 1827226128182048838
+      firstFrame: 1
+      lastFrame: 92
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 1
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 1
+    - serializedVersion: 16
+      name: Run
+      takeName: Take 001
+      internalID: -998496362607748373
+      firstFrame: 100
+      lastFrame: 123
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 1
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 1
+    - serializedVersion: 16
+      name: Airborne
+      takeName: Take 001
+      internalID: 3060872287085348379
+      firstFrame: 172
+      lastFrame: 198
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 1
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 1
+    - serializedVersion: 16
+      name: WallRiding Right
+      takeName: Take 001
+      internalID: 6641085478485924818
+      firstFrame: 200
+      lastFrame: 248
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 1
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 1
+    - serializedVersion: 16
+      name: WallRiding Left
+      takeName: Take 001
+      internalID: -5059006814000262888
+      firstFrame: 200
+      lastFrame: 248
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 1
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 1
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 1
+    - serializedVersion: 16
+      name: BatHold
+      takeName: Take 001
+      internalID: 6234510843852800090
+      firstFrame: 250
+      lastFrame: 274
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 1
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 1
+    - serializedVersion: 16
+      name: Bat Swing
+      takeName: Take 001
+      internalID: -6788666626592393668
+      firstFrame: 276
+      lastFrame: 314
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 1
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 1
     isReadable: 0
   meshes:
     lODScreenPercentages: []
@@ -79,8 +285,811 @@ ModelImporter:
   importAnimation: 1
   humanDescription:
     serializedVersion: 3
-    human: []
-    skeleton: []
+    human:
+    - boneName: playerrigbinded:joint1
+      humanName: Hips
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint53
+      humanName: LeftUpperLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint56
+      humanName: RightUpperLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint54
+      humanName: LeftLowerLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint57
+      humanName: RightLowerLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint55
+      humanName: LeftFoot
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint58
+      humanName: RightFoot
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint2
+      humanName: Spine
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint4
+      humanName: Neck
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint5
+      humanName: Head
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint7
+      humanName: LeftShoulder
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint30
+      humanName: RightShoulder
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint8
+      humanName: LeftUpperArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint31
+      humanName: RightUpperArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint9
+      humanName: LeftLowerArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint32
+      humanName: RightLowerArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint10
+      humanName: LeftHand
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint33
+      humanName: RightHand
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: joint3
+      humanName: LeftToes
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: joint4
+      humanName: RightToes
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint6
+      humanName: RightEye
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint27
+      humanName: Left Thumb Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint28
+      humanName: Left Thumb Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint29
+      humanName: Left Thumb Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint23
+      humanName: Left Index Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint24
+      humanName: Left Index Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint25
+      humanName: Left Index Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint19
+      humanName: Left Middle Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint20
+      humanName: Left Middle Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint21
+      humanName: Left Middle Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint15
+      humanName: Left Ring Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint16
+      humanName: Left Ring Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint17
+      humanName: Left Ring Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint11
+      humanName: Left Little Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint12
+      humanName: Left Little Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint13
+      humanName: Left Little Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint38
+      humanName: Right Thumb Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint39
+      humanName: Right Thumb Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint40
+      humanName: Right Thumb Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint49
+      humanName: Right Index Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint50
+      humanName: Right Index Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint51
+      humanName: Right Index Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint45
+      humanName: Right Middle Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint46
+      humanName: Right Middle Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint47
+      humanName: Right Middle Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint41
+      humanName: Right Ring Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint42
+      humanName: Right Ring Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint43
+      humanName: Right Ring Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint34
+      humanName: Right Little Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint35
+      humanName: Right Little Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: playerrigbinded:joint36
+      humanName: Right Little Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    skeleton:
+    - name: Player(Clone)
+      parentName: 
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: playerrigbinded:pCube1
+      parentName: Player(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: playerrigbinded:materialXStack1
+      parentName: Player(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: playerrigbinded:super
+      parentName: Player(Clone)
+      position: {x: -0, y: -1.8141595, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: playerrigbinded:hip
+      parentName: playerrigbinded:super
+      position: {x: -0.0019987714, y: 1.2686608, z: -0.1014575}
+      rotation: {x: 0, y: -0.03243891, z: -0, w: 0.99947375}
+      scale: {x: 1, y: 1, z: 1}
+    - name: playerrigbinded:waist
+      parentName: playerrigbinded:hip
+      position: {x: 0.011992629, y: 0.37576905, z: 1.8318678e-16}
+      rotation: {x: -0.028712232, y: 0, z: -0, w: 0.9995877}
+      scale: {x: 1, y: 1, z: 1}
+    - name: playerrigbinded:joint1
+      parentName: playerrigbinded:hip
+      position: {x: 0, y: 1.8416448, z: 0}
+      rotation: {x: 0.5081779, y: -0.5236035, z: 0.49168605, w: -0.47522566}
+      scale: {x: 1.0000005, y: 1.0000005, z: 1.0000006}
+    - name: playerrigbinded:joint2
+      parentName: playerrigbinded:joint1
+      position: {x: -0.37596035, y: 4.3104283e-33, z: 2.1335514e-17}
+      rotation: {x: -0.000000029802322, y: 0.021505788, z: 0.00000011920929, w: -0.99976873}
+      scale: {x: 1, y: 1, z: 0.99999994}
+    - name: playerrigbinded:joint3
+      parentName: playerrigbinded:joint2
+      position: {x: -0.35980105, y: -1.5406975e-18, z: -8.701372e-17}
+      rotation: {x: 0.000000061455346, y: -0.0048598573, z: 0.00000005843995, w: 0.9999882}
+      scale: {x: 1.0000001, y: 1.0000001, z: 0.99999994}
+    - name: playerrigbinded:joint4
+      parentName: playerrigbinded:joint3
+      position: {x: -0.19192371, y: -2.246267e-18, z: 8.063081e-16}
+      rotation: {x: -0.000000060224274, y: 0.010415032, z: 6.5357636e-10, w: 0.99994576}
+      scale: {x: 1, y: 0.99999994, z: 0.9999998}
+    - name: playerrigbinded:joint5
+      parentName: playerrigbinded:joint4
+      position: {x: -0.09993857, y: -7.078573e-19, z: 2.9796475e-16}
+      rotation: {x: -0, y: -0, z: -0, w: 1}
+      scale: {x: 1.0000002, y: 1.0000001, z: 1.0000001}
+    - name: playerrigbinded:joint6
+      parentName: playerrigbinded:joint5
+      position: {x: -0.36377642, y: -2.5766006e-18, z: 1.0727877e-15}
+      rotation: {x: -0, y: -0, z: -0, w: 1}
+      scale: {x: 1.0000002, y: 1.0000001, z: 1.0000001}
+    - name: playerrigbinded:joint7
+      parentName: playerrigbinded:joint3
+      position: {x: -0.08599739, y: -0.008282394, z: -0.3821991}
+      rotation: {x: 0.5051804, y: -0.49476537, z: 0.4947654, w: 0.5051804}
+      scale: {x: 1, y: 0.9999997, z: 0.99999994}
+    - name: playerrigbinded:joint8
+      parentName: playerrigbinded:joint7
+      position: {x: -0.51614946, y: 0, z: -0.057099536}
+      rotation: {x: 0.000000029802315, y: -0.011176747, z: -0.00000011920926, w: 0.9999376}
+      scale: {x: 1.0000002, y: 1, z: 1}
+    - name: playerrigbinded:joint9
+      parentName: playerrigbinded:joint8
+      position: {x: -0.4436209, y: 0, z: 0.051283438}
+      rotation: {x: 0.000000029410506, y: -0.006357329, z: -0.00000008947312, w: 0.9999798}
+      scale: {x: 1.0000002, y: 1.0000002, z: 1}
+    - name: playerrigbinded:joint10
+      parentName: playerrigbinded:joint9
+      position: {x: -0.113627955, y: 0, z: -0.000049559476}
+      rotation: {x: 0.0066586286, y: -0.4042821, z: 0.015079572, w: 0.9144858}
+      scale: {x: 1.0000002, y: 1.0000005, z: 1}
+    - name: playerrigbinded:joint11
+      parentName: playerrigbinded:joint10
+      position: {x: -0.11355602, y: -0.00003004919, z: 8.2434054e-17}
+      rotation: {x: -0.03672673, y: 0.36818185, z: -0.09957138, w: 0.9236768}
+      scale: {x: 1, y: 0.9999997, z: 1.0000006}
+    - name: playerrigbinded:joint12
+      parentName: playerrigbinded:joint11
+      position: {x: -0.046020485, y: -0.0069893636, z: -1.5111123e-16}
+      rotation: {x: -0.00000009223811, y: 0.012129039, z: 0.000000087968246, w: 0.9999265}
+      scale: {x: 0.9999997, y: 1, z: 0.99999994}
+    - name: playerrigbinded:joint13
+      parentName: playerrigbinded:joint12
+      position: {x: -0.04318965, y: -0.006954721, z: 1.3498745e-16}
+      rotation: {x: 0.00000005788367, y: -0.011625594, z: 0.0000000750993, w: 0.99993247}
+      scale: {x: 1, y: 1, z: 0.9999998}
+    - name: playerrigbinded:joint14
+      parentName: playerrigbinded:joint13
+      position: {x: -0.029722512, y: -0.0060283192, z: 1.0760751e-16}
+      rotation: {x: -0, y: -0, z: -1.5543119e-15, w: 1}
+      scale: {x: 1, y: 1, z: 1.0000001}
+    - name: playerrigbinded:joint27
+      parentName: playerrigbinded:joint10
+      position: {x: 0.059015293, y: -0.03466457, z: 0.048973106}
+      rotation: {x: -0.019590776, y: 0.62075454, z: -0.027606009, w: 0.7832738}
+      scale: {x: 1.0000001, y: 1.0000001, z: 1.0000004}
+    - name: playerrigbinded:joint28
+      parentName: playerrigbinded:joint27
+      position: {x: -0.0651304, y: 0, z: 3.6154634e-18}
+      rotation: {x: -0.000000027939674, y: -0.034044858, z: -0.0000009592621, w: 0.9994203}
+      scale: {x: 1.0000005, y: 1.0000005, z: 1}
+    - name: playerrigbinded:joint29
+      parentName: playerrigbinded:joint28
+      position: {x: -0.08672677, y: 0, z: 5.953571e-17}
+      rotation: {x: 7.105425e-15, y: -0, z: -1.7763562e-15, w: 1}
+      scale: {x: 1.0000002, y: 1.0000001, z: 1}
+    - name: playerrigbinded:joint15
+      parentName: playerrigbinded:joint10
+      position: {x: -0.0866189, y: 0.01159937, z: 0.028141113}
+      rotation: {x: -0.034844875, y: 0.36445704, z: -0.09466412, w: 0.9257406}
+      scale: {x: 1.0000005, y: 1, z: 1.0000004}
+    - name: playerrigbinded:joint16
+      parentName: playerrigbinded:joint15
+      position: {x: -0.06612217, y: -0.009709109, z: 3.6637358e-17}
+      rotation: {x: -0.000000029556052, y: 0.008263588, z: -0.00000008940595, w: 0.9999659}
+      scale: {x: 0.99999994, y: 1.0000004, z: 1}
+    - name: playerrigbinded:joint17
+      parentName: playerrigbinded:joint16
+      position: {x: -0.057984598, y: -0.0068025906, z: 1.9477908e-16}
+      rotation: {x: -8.750084e-10, y: 0.020687997, z: -0.000000044108393, w: 0.999786}
+      scale: {x: 1, y: 1, z: 0.9999998}
+    - name: playerrigbinded:joint18
+      parentName: playerrigbinded:joint17
+      position: {x: -0.03311659, y: -0.0056846766, z: 3.967995e-17}
+      rotation: {x: -0.00000006044242, y: -0.0000000018626447, z: 0.000000028064294,
+        w: 1}
+      scale: {x: 1.0000002, y: 1.0000001, z: 1.0000001}
+    - name: playerrigbinded:joint19
+      parentName: playerrigbinded:joint10
+      position: {x: -0.06404408, y: 0.016307333, z: 0.051810186}
+      rotation: {x: -0.03556779, y: 0.36647385, z: -0.0963864, w: 0.9247387}
+      scale: {x: 1.0000005, y: 1, z: 1.0000004}
+    - name: playerrigbinded:joint20
+      parentName: playerrigbinded:joint19
+      position: {x: -0.06373364, y: -0.009422809, z: 5.652755e-16}
+      rotation: {x: 0.00000011954394, y: -0.003921151, z: -0.000000044156568, w: 0.9999924}
+      scale: {x: 1.0000004, y: 1.0000011, z: 0.99999994}
+    - name: playerrigbinded:joint21
+      parentName: playerrigbinded:joint20
+      position: {x: -0.066603035, y: -0.00632214, z: -6.893863e-16}
+      rotation: {x: -0.00000002990951, y: -0.0035970444, z: 0.00000007450561, w: 0.9999935}
+      scale: {x: 1.0000005, y: 0.9999998, z: 0.9999998}
+    - name: playerrigbinded:joint22
+      parentName: playerrigbinded:joint21
+      position: {x: -0.04695632, y: -0.0039198725, z: 1.8318679e-17}
+      rotation: {x: -0, y: -2.3283062e-10, z: -2.5812683e-15, w: 1}
+      scale: {x: 1, y: 1.0000004, z: 1.0000002}
+    - name: playerrigbinded:joint23
+      parentName: playerrigbinded:joint10
+      position: {x: -0.036158007, y: 0.011501278, z: 0.078871615}
+      rotation: {x: -0.031971976, y: 0.3621599, z: -0.08638947, w: 0.9275532}
+      scale: {x: 1.0000001, y: 0.9999998, z: 1.0000005}
+    - name: playerrigbinded:joint24
+      parentName: playerrigbinded:joint23
+      position: {x: -0.060389526, y: -0.0080234585, z: 5.724587e-18}
+      rotation: {x: -0.00031065368, y: -0.0055704685, z: 0.04710709, w: 0.9988743}
+      scale: {x: 1.0000004, y: 1.0000007, z: 1}
+    - name: playerrigbinded:joint25
+      parentName: playerrigbinded:joint24
+      position: {x: -0.059483632, y: 0.0023777164, z: -8.7299954e-17}
+      rotation: {x: 0.000032573982, y: 0.0029332833, z: -0.02093122, w: 0.9997766}
+      scale: {x: 1.0000001, y: 0.9999998, z: 0.99999994}
+    - name: playerrigbinded:joint26
+      parentName: playerrigbinded:joint25
+      position: {x: -0.036443464, y: -0.003024972, z: 2.9832254e-16}
+      rotation: {x: 0.000000029796515, y: -0.000000030267977, z: -5.878723e-10, w: 1}
+      scale: {x: 1, y: 1.0000004, z: 0.99999994}
+    - name: playerrigbinded:joint30
+      parentName: playerrigbinded:joint3
+      position: {x: -0.07000453, y: -0.008282661, z: 0.385449}
+      rotation: {x: 0.5051805, y: 0.49476537, z: 0.49476534, w: -0.5051804}
+      scale: {x: 1, y: 0.9999997, z: 1.0000004}
+    - name: playerrigbinded:joint31
+      parentName: playerrigbinded:joint30
+      position: {x: 0.51615095, y: -2.5279777e-15, z: 0.057099897}
+      rotation: {x: 0.000000119209275, y: -0.022168739, z: -0.00000008940696, w: 0.99975425}
+      scale: {x: 1.0000004, y: 1.0000001, z: 1.0000007}
+    - name: playerrigbinded:joint32
+      parentName: playerrigbinded:joint31
+      position: {x: 0.4436225, y: -0.0000000010807157, z: -0.051283445}
+      rotation: {x: -0.000000059280172, y: -0.0063573285, z: 0.0000000597383, w: 0.9999798}
+      scale: {x: 1.0000005, y: 1.0000004, z: 1.0000008}
+    - name: playerrigbinded:joint33
+      parentName: playerrigbinded:joint32
+      position: {x: 0.11362354, y: 3.2969703e-11, z: 0.00004965193}
+      rotation: {x: 0.0066570747, y: -0.4042822, z: 0.015075954, w: 0.9144858}
+      scale: {x: 1.0000002, y: 1.0000001, z: 1.0000002}
+    - name: playerrigbinded:joint34
+      parentName: playerrigbinded:joint33
+      position: {x: 0.113557585, y: 0.000029699999, z: -0.0000023396553}
+      rotation: {x: -0.0367257, y: 0.3681832, z: -0.09957009, w: 0.9236764}
+      scale: {x: 1.0000005, y: 1.0000011, z: 1}
+    - name: playerrigbinded:joint35
+      parentName: playerrigbinded:joint34
+      position: {x: 0.04601785, y: 0.0069894, z: -0.00000012509616}
+      rotation: {x: 0.0000000910046, y: 0.0121290665, z: -0.000000089441244, w: 0.99992645}
+      scale: {x: 1.0000001, y: 1.0000004, z: 1.0000007}
+    - name: playerrigbinded:joint36
+      parentName: playerrigbinded:joint35
+      position: {x: 0.04319086, y: 0.0069550793, z: 0.00000065618303}
+      rotation: {x: 0.00000015100731, y: -0.011625533, z: -0.000000038108098, w: 0.9999324}
+      scale: {x: 1.0000007, y: 1.0000002, z: 1.0000006}
+    - name: playerrigbinded:joint37
+      parentName: playerrigbinded:joint36
+      position: {x: 0.029722052, y: 0.0060277795, z: -0.0000000474141}
+      rotation: {x: 0.00000044697663, y: -0.0000000586733, z: 0.0000000072075133,
+        w: 1}
+      scale: {x: 0.9999997, y: 1, z: 0.99999994}
+    - name: playerrigbinded:joint38
+      parentName: playerrigbinded:joint33
+      position: {x: -0.059012376, y: 0.03466451, z: -0.04897657}
+      rotation: {x: -0.019600391, y: 0.620759, z: -0.02761912, w: 0.7832697}
+      scale: {x: 1.0000005, y: 1.0000002, z: 0.99999994}
+    - name: playerrigbinded:joint39
+      parentName: playerrigbinded:joint38
+      position: {x: 0.06512835, y: -1.6948442e-13, z: -0.0000008433891}
+      rotation: {x: 0.00000016577536, y: -0.03403591, z: 0.0000010710206, w: 0.99942064}
+      scale: {x: 1, y: 1.0000012, z: 1}
+    - name: playerrigbinded:joint40
+      parentName: playerrigbinded:joint39
+      position: {x: 0.08672532, y: -3.5171864e-15, z: -0.00000000867832}
+      rotation: {x: 0.00000008940665, y: 0.000000014901158, z: 2.4696506e-10, w: 1}
+      scale: {x: 1.0000005, y: 1, z: 1.0000006}
+    - name: playerrigbinded:joint41
+      parentName: playerrigbinded:joint33
+      position: {x: 0.08661982, y: -0.0115995025, z: -0.028142402}
+      rotation: {x: -0.03484437, y: 0.36445823, z: -0.09466439, w: 0.9257401}
+      scale: {x: 1.0000004, y: 1.0000007, z: 0.99999994}
+    - name: playerrigbinded:joint42
+      parentName: playerrigbinded:joint41
+      position: {x: 0.0661188, y: 0.0097092595, z: -0.0000000019538913}
+      rotation: {x: 0.000000059363444, y: 0.008263587, z: 0.000000043471097, w: 0.9999659}
+      scale: {x: 0.9999997, y: 1.0000001, z: 0.9999996}
+    - name: playerrigbinded:joint43
+      parentName: playerrigbinded:joint42
+      position: {x: 0.057988916, y: 0.00680262, z: 0.00000004089055}
+      rotation: {x: -0.0000002668381, y: 0.02068799, z: -0.00000012573128, w: 0.999786}
+      scale: {x: 1.0000001, y: 1, z: 1.0000001}
+    - name: playerrigbinded:joint44
+      parentName: playerrigbinded:joint43
+      position: {x: 0.03311491, y: 0.005684579, z: -0.00000015278275}
+      rotation: {x: -0, y: -0, z: -2.664534e-15, w: 1}
+      scale: {x: 1, y: 1.0000001, z: 0.99999994}
+    - name: playerrigbinded:joint45
+      parentName: playerrigbinded:joint33
+      position: {x: 0.064047076, y: -0.016307285, z: -0.05181327}
+      rotation: {x: -0.03556721, y: 0.3664753, z: -0.09638663, w: 0.9247381}
+      scale: {x: 1.0000006, y: 1.0000008, z: 1}
+    - name: playerrigbinded:joint46
+      parentName: playerrigbinded:joint45
+      position: {x: 0.0637302, y: 0.009422819, z: -0.00000008128577}
+      rotation: {x: 0.000000029184502, y: -0.00392124, z: 0.000000090213106, w: 0.9999924}
+      scale: {x: 1, y: 1.0000005, z: 1.0000006}
+    - name: playerrigbinded:joint47
+      parentName: playerrigbinded:joint46
+      position: {x: 0.06660232, y: 0.00632214, z: -0.000000021535424}
+      rotation: {x: -0.00000020840166, y: -0.0035970155, z: -0.00000013421725, w: 0.99999356}
+      scale: {x: 1.0000002, y: 1, z: 1.0000002}
+    - name: playerrigbinded:joint48
+      parentName: playerrigbinded:joint47
+      position: {x: 0.046958994, y: 0.00391974, z: 4.465911e-13}
+      rotation: {x: 0.000000029802319, y: 0.000000029802319, z: 0.000000029802317,
+        w: 1}
+      scale: {x: 0.99999994, y: 1.0000001, z: 1.0000002}
+    - name: playerrigbinded:joint49
+      parentName: playerrigbinded:joint33
+      position: {x: 0.036158945, y: -0.011501167, z: -0.07887307}
+      rotation: {x: -0.03196938, y: 0.3621634, z: -0.0863827, w: 0.9275525}
+      scale: {x: 1.0000004, y: 1.0000006, z: 0.9999998}
+    - name: playerrigbinded:joint50
+      parentName: playerrigbinded:joint49
+      position: {x: 0.060387306, y: 0.00802296, z: 0.000000092635695}
+      rotation: {x: -0.00031071514, y: -0.0055696936, z: 0.047103472, w: 0.9988744}
+      scale: {x: 1.0000001, y: 1.0000002, z: 1.0000005}
+    - name: playerrigbinded:joint51
+      parentName: playerrigbinded:joint50
+      position: {x: 0.059482716, y: -0.0023773196, z: 0.0000001285552}
+      rotation: {x: 0.000032746888, y: 0.0029335427, z: -0.020916138, w: 0.9997769}
+      scale: {x: 1.0000002, y: 1.0000004, z: 1.0000005}
+    - name: playerrigbinded:joint52
+      parentName: playerrigbinded:joint51
+      position: {x: 0.036447156, y: 0.00302478, z: -0.000000106580345}
+      rotation: {x: 0.00000035638243, y: 0.000000029802312, z: -0.00000006664737,
+        w: 1}
+      scale: {x: 1.0000001, y: 1.0000005, z: 1.0000006}
+    - name: playerrigbinded:joint53
+      parentName: playerrigbinded:joint1
+      position: {x: 0.024171183, y: -0.053595416, z: -0.12412833}
+      rotation: {x: 0.000000029802326, y: 0.9995839, z: 0.00000005960465, w: -0.02884558}
+      scale: {x: 0.99999994, y: 0.9999999, z: 0.9999998}
+    - name: playerrigbinded:joint54
+      parentName: playerrigbinded:joint53
+      position: {x: -0.67405283, y: -0.05805766, z: 1.2232219e-16}
+      rotation: {x: -0.0000000012827952, y: -0.0148369875, z: 0.000000028896268, w: 0.99988997}
+      scale: {x: 1.0000002, y: 1.0000001, z: 1.0000001}
+    - name: playerrigbinded:joint55
+      parentName: playerrigbinded:joint54
+      position: {x: -0.52543443, y: 0.03631518, z: -8.500148e-16}
+      rotation: {x: -0, y: -0, z: 8.4654495e-16, w: 1}
+      scale: {x: 1.0000001, y: 1, z: 1.0000002}
+    - name: joint3
+      parentName: playerrigbinded:joint55
+      position: {x: -0.02271731, y: -0.26966488, z: -0.0070551815}
+      rotation: {x: 0.5147554, y: 0.48479575, z: -0.4847957, w: 0.5147553}
+      scale: {x: 1.0000001, y: 1.0000001, z: 1.0000001}
+    - name: playerrigbinded:joint56
+      parentName: playerrigbinded:joint1
+      position: {x: 0.01620669, y: -0.04836612, z: 0.12541679}
+      rotation: {x: -0.9981551, y: 0.00000008940697, z: -0.06071639, w: -0.00000025331974}
+      scale: {x: 0.99999994, y: 0.9999998, z: 0.9999997}
+    - name: playerrigbinded:joint57
+      parentName: playerrigbinded:joint56
+      position: {x: 0.6740508, y: 0.06595884, z: -0.00000043040455}
+      rotation: {x: 0.000000030432485, y: -0.014837062, z: -0.00000003176184, w: 0.9998899}
+      scale: {x: 1.0000005, y: 1.0000001, z: 1}
+    - name: playerrigbinded:joint58
+      parentName: playerrigbinded:joint57
+      position: {x: 0.5254386, y: -0.037194297, z: 0.00000026375614}
+      rotation: {x: 0.000000028402987, y: 0.000000059604638, z: 0.000000031138843,
+        w: 1}
+      scale: {x: 1.0000004, y: 1.0000004, z: 1.0000001}
+    - name: joint4
+      parentName: playerrigbinded:joint58
+      position: {x: 0.06376017, y: 0.19498907, z: -0.014385012}
+      rotation: {x: -0.5147552, y: 0.48479566, z: 0.4847959, w: 0.51475555}
+      scale: {x: 1.0000001, y: 1.0000001, z: 1.0000002}
+    - name: playerrigbinded:l_arm
+      parentName: playerrigbinded:super
+      position: {x: -0.3842152, y: 1.1428945, z: -0.06211237}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: playerrigbinded:ikHandle2
+      parentName: playerrigbinded:l_arm
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ikHandle3
+      parentName: playerrigbinded:l_arm
+      position: {x: -0, y: -0.000000019669532, z: -0.00000018686055}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: playerrigbinded:r_arm
+      parentName: playerrigbinded:super
+      position: {x: 0.4106655, y: 1.1499158, z: -0.09016838}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: playerrigbinded:ikHandle1
+      parentName: playerrigbinded:r_arm
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ikHandle4
+      parentName: playerrigbinded:r_arm
+      position: {x: -0, y: -0.000000019669532, z: -0.000000009834766}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: playerrigbinded:l_leg
+      parentName: playerrigbinded:super
+      position: {x: -0.21862093, y: 0.075098634, z: 0.015489845}
+      rotation: {x: 0, y: -0.18001622, z: -0, w: 0.9836637}
+      scale: {x: 1, y: 1, z: 1}
+    - name: playerrigbinded:ikHandle3
+      parentName: playerrigbinded:l_leg
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ikHandle1
+      parentName: playerrigbinded:l_leg
+      position: {x: -0, y: 0, z: -0.0000000024586915}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: playerrigbinded:r_leg
+      parentName: playerrigbinded:super
+      position: {x: 0.2146234, y: 0.052619692, z: -0.02432683}
+      rotation: {x: 0, y: 0.011554545, z: -0, w: 0.99993324}
+      scale: {x: 1, y: 1, z: 1}
+    - name: playerrigbinded:ikHandle4
+      parentName: playerrigbinded:r_leg
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ikHandle2
+      parentName: playerrigbinded:r_leg
+      position: {x: -0, y: 0, z: -0.000000004917383}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
     armTwist: 0.5
     foreArmTwist: 0.5
     upperLegTwist: 0.5
@@ -88,16 +1097,16 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 0.65999997
+    globalScale: 66
     rootMotionBoneName: 
     hasTranslationDoF: 0
-    hasExtraRoot: 0
+    hasExtraRoot: 1
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   autoGenerateAvatarMappingIfUnspecified: 1
-  animationType: 2
+  animationType: 3
   humanoidOversampling: 1
-  avatarSetup: 0
+  avatarSetup: 1
   addHumanoidExtraRootOnlyWhenUsingAvatar: 1
   importBlendShapeDeformPercent: 1
   remapMaterialsIfMaterialImportModeIsNone: 0

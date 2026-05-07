@@ -7,6 +7,7 @@ public class BustedWall : MonoBehaviour
     [SerializeField] private GameObject FullWallPrefab;
     [SerializeField] private AudioSource wallAudioSource;
     [SerializeField] private AudioClip breakClip;
+    [SerializeField] private float respawnTime = 30f;
 
     private GameObject currentBustedWallInstance;
 
@@ -41,8 +42,12 @@ public class BustedWall : MonoBehaviour
 
     private IEnumerator ResetWallRoutine()
     {
-        yield return new WaitForSeconds(30f);
+        yield return new WaitForSeconds(respawnTime);
+        RespawnWall();
+    }
 
+    public void RespawnWall()
+    {
         // Destroy the busted wall instance
         if (currentBustedWallInstance != null)
         {

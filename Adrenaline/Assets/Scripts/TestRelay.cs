@@ -82,12 +82,22 @@ public class TestRelay : MonoBehaviour
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
 
+            SetGameUIActive(false);
+
             _ = DisconnectAndReturnToMenu();
         }
     }
 
     private async System.Threading.Tasks.Task DisconnectAndReturnToMenu()
     {
+        SetGameUIActive(false);
+
+        // Show disconnect screen
+        if (DiscconectedUI != null)
+        {
+            DiscconectedUI.SetActive(true);
+        }
+
         if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsListening)
         {
             NetworkManager.Singleton.Shutdown();
@@ -126,6 +136,7 @@ public class TestRelay : MonoBehaviour
             transport.SetRelayServerData(relayServerData);
 
             NetworkManager.Singleton.StartHost();
+            SetGameUIActive(true);
 
             if (NetworkManagerUI != null)
             {
@@ -178,6 +189,7 @@ public class TestRelay : MonoBehaviour
             transport.SetRelayServerData(relayServerData);
 
             NetworkManager.Singleton.StartClient();
+            SetGameUIActive(true);
 
             if (NetworkManagerUI != null)
             {
@@ -196,6 +208,15 @@ public class TestRelay : MonoBehaviour
             {
                 LobbyText.text = "Invalid code. Please try again.";
             }
+        }
+    }
+
+    private void SetGameUIActive(bool isActive)
+    {
+        GameManager gameManager = Object.FindFirstObjectByType<GameManager>();
+        if (gameManager != null && gameManager.GameUI != null)
+        {
+            gameManager.GameUI.SetActive(isActive);
         }
     }
 }

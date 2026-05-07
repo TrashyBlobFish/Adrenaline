@@ -26,8 +26,8 @@ public class WallRunning : MonoBehaviour
     public float minJumpHeight;
     private RaycastHit leftWallhit;
     private RaycastHit rightWallhit;
-    private bool wallLeft;
-    private bool wallRight;
+    public bool wallLeft;
+    public bool wallRight;
 
     [Header("Attachment Settings")]
     public float minAttachSpeed = 5f; // Minimum speed to start wall-running
@@ -47,7 +47,7 @@ public class WallRunning : MonoBehaviour
 
     private void Update()
     {
-        CheckForWall();
+        CheckForWall(); // Always check for walls every frame
 
         // Update input values so IsWallRunningPossible() works
         horizontalInput = Input.GetAxisRaw("Horizontal");

@@ -58,7 +58,7 @@ public class SpeedSphere : MonoBehaviour
         playerMove.sprintSpeed += speedGained;
 
         // Apply green effect to player mesh (MaterialPropertyBlock, like StaminaSphere)
-        Renderer playerRenderer = playerMove.GetComponentInChildren<MeshRenderer>();
+        Renderer playerRenderer = playerMove.GetComponentInChildren<SkinnedMeshRenderer>();
         Color originalColor = Color.white;
         MaterialPropertyBlock materialBlock = null;
 

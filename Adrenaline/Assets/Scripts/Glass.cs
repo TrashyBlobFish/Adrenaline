@@ -4,6 +4,7 @@ public class Glass : MonoBehaviour
 {
     public ParticleSystem hitParticles;
     public AudioSource hitAudioSource;
+    public float rebuildTime = 30f;
 
     private BoxCollider objCollider;
     private MeshRenderer meshRenderer;
@@ -73,11 +74,11 @@ public class Glass : MonoBehaviour
             hitParticles.Play();
         }
 
-        // Schedule rebuild after 30 seconds
-        Invoke(nameof(RebuildGlass), 30f);
+        // Schedule rebuild after specified time
+        Invoke(nameof(RebuildGlass), rebuildTime);
     }
 
-    private void RebuildGlass()
+    public void RebuildGlass()
     {
         isDestroyed = false;
 

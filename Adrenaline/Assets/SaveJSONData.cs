@@ -1,13 +1,14 @@
-using UnityEngine;
 using System.IO;
 using System.Collections;
-using System.Xml;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SaveJSONData : MonoBehaviour
 {
     private GameObject gc;
     private DataProcessing dataProcessing;
     private string path = "";
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -23,33 +24,50 @@ public class SaveJSONData : MonoBehaviour
     // Update is called once per frame
     public void SaveAndExit()
     {
-        
-            CreateDataToSave();
-            SaveData();
-            ExitPause();
+        Debug.Log("[SaveJSONData] Starting SaveAndExit process...");
+        CreateDataToSave();
+        SaveData();
+        StartCoroutine(ExitPause());
     }
 
-    IEnumerator ExitPause()
+    private IEnumerator ExitPause()
     {
         yield return new WaitForSeconds(2f);
-        Application.Quit();
+        Debug.Log("[SaveJSONData] Quitting application...");
+
+        #if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+            Debug.Log("[SaveJSONData] Editor detected - stopping play mode instead of quitting.");
+        #else
+            Application.Quit();
+        #endif
     }
+
     private void CreateDataToSave()
     {
+        Debug.Log("[SaveJSONData] Creating data to save...");
         dataProcessing = new DataProcessing(
             GetComponent<UserProfileData>().NumberOfFalls,
             GetComponent<UserProfileData>().TimesShieldUsed,
             GetComponent<UserProfileData>().TimeSpentAFK,
             GetComponent<UserProfileData>().Timespent3rdPerson,
             GetComponent<UserProfileData>().Timespent1stPerson);
-
     }
 
     private void SaveData()
     {
-        string json = JsonUtility.ToJson(dataProcessing);
-        StreamWriter writer = new StreamWriter(path);
-        writer.Write(json);
-        writer.Close();
+        try
+        {
+            Debug.Log($"[SaveJSONData] Saving data to: {path}");
+            string json = JsonUtility.ToJson(dataProcessing);
+            StreamWriter writer = new StreamWriter(path);
+            writer.Write(json);
+            writer.Close();
+            Debug.Log("[SaveJSONData] Data saved successfully!");
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"[SaveJSONData] Error saving data: {e.Message}");
+        }
     }
 }

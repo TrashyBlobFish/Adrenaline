@@ -5,6 +5,7 @@ using Unity.Netcode;
 using UnityEngine.UI;
 using UnityEngine.Rendering;
 using UnityEngine.SocialPlatforms.Impl;
+using UnityEngine.Audio;
 
 
 public class PlayerMovement : NetworkBehaviour
@@ -17,7 +18,7 @@ public class PlayerMovement : NetworkBehaviour
     public PlayerInput playerInput;
     public InputActionAsset inputActions;
     public GameObject GameUI;
-
+    [SerializeField] private RendererFeatureToggle rendererFeatureToggle;
 
     private Rigidbody rb;
     private NetworkObject rootNetworkObject;
@@ -30,6 +31,11 @@ public class PlayerMovement : NetworkBehaviour
     private float trainTargetVolume = 0f;
     private float trainInitialVolume = 0.7f;
 
+    [Header("Audio Mixer")]
+    [SerializeField] private AudioMixerSnapshot movementSnapshot;
+    [SerializeField] private AudioMixerSnapshot gameplaySnapshot;
+    [SerializeField] private float snapshotTransitionTime = 0.5f;
+    private bool isInMovementSnapshot = false;
 
     [Header("Audio Settings")]
     public float speedReachedCooldown = 2f;
@@ -126,6 +132,17 @@ public class PlayerMovement : NetworkBehaviour
 
     private float targetRotation = 0f; // Store the target rotation
 
+    [Header("Animation")]
+    [SerializeField] private Animator playerAnimator;
+    [SerializeField] private float animationBlendSpeed = 6f;
+    [SerializeField] private float animationSpeedSmoothRate = 6f;
+    private static readonly int SpeedHash = Animator.StringToHash("Speed");
+    private static readonly int AirborneHash = Animator.StringToHash("Airborne");
+    private static readonly int WallRidingHash = Animator.StringToHash("WallRiding");
+    private static readonly int WallSideHash = Animator.StringToHash("WallSide");
+
+    private float currentAnimationSpeed = 1f;
+
     void Awake()
     {
         if (playerInput == null)
@@ -152,6 +169,8 @@ public class PlayerMovement : NetworkBehaviour
 
     void Start()
     {
+        if (playerAnimator == null)
+            playerAnimator = GetComponentInChildren<Animator>(true);
         if (stateMachine == null)
             stateMachine = GetComponent<PlayerStateMachine>();
         userProfile = Object.FindFirstObjectByType<UserProfileData>();
@@ -169,8 +188,16 @@ public class PlayerMovement : NetworkBehaviour
             playerCamera = Camera.main;
         if (GameUI == null)
         {
-            GameUI = GameObject.Find("Game UI");
-            GameUI.SetActive(true);
+            GameManager gameManager = Object.FindFirstObjectByType<GameManager>();
+            if (gameManager != null)
+            {
+                GameUI = gameManager.GameUI;
+            }
+
+            if (GameUI != null)
+            {
+                GameUI.SetActive(true);
+            }
         }
 
         // Setup audio sources if not assigned
@@ -182,6 +209,12 @@ public class PlayerMovement : NetworkBehaviour
         // Setup particle system if not assigned
         if (tripParticleSystem == null)
             tripParticleSystem = GetComponentInChildren<ParticleSystem>();
+
+        // Find RendererFeatureToggle if not assigned
+        if (rendererFeatureToggle == null)
+        {
+            FindAndAssignRendererToggle();
+        }
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -203,8 +236,14 @@ public class PlayerMovement : NetworkBehaviour
         ApplyRotation();
     }
 
+    // Update your Update() method so animation updates for owner and non-owner players
     void Update()
     {
+        if (rootNetworkObject == null)
+            return;
+
+        UpdateAnimationSpeed();
+
         if (!rootNetworkObject.IsOwner)
         {
             playerCamera.gameObject.SetActive(false);
@@ -264,6 +303,12 @@ public class PlayerMovement : NetworkBehaviour
             PlayTripParticlesClientRpc(tripParticleSystem.transform.position);
             HandleTrip();
             Debug.Log("Trip input detected");
+        }
+
+        // Bat swing input
+        if (HasBaseballBat && playerInput.actions["Attack"].WasPressedThisFrame())
+        {
+            playerAnimator.SetTrigger("SwingBat");
         }
 
         //Handles sound
@@ -346,6 +391,8 @@ public class PlayerMovement : NetworkBehaviour
 
         wasAboveThreshold = aboveThreshold;
 
+        // Update mixer snapshot based on speed
+        UpdateMixerSnapshot(currentSpeed);
 
         // Respawn check
         if (transform.position.y < -50)
@@ -358,6 +405,38 @@ public class PlayerMovement : NetworkBehaviour
         if (staminaSlider != null)
         {
             staminaSlider.value = currentStamina;
+        }
+    }
+
+    private void UpdateMixerSnapshot(float currentSpeed)
+    {
+        bool shouldBeInMovementSnapshot = currentSpeed > sprintSpeed;
+
+        if (shouldBeInMovementSnapshot && !isInMovementSnapshot)
+        {
+            TransitionToMovementSnapshot();
+            isInMovementSnapshot = true;
+        }
+        else if (!shouldBeInMovementSnapshot && isInMovementSnapshot)
+        {
+            TransitionToGameplaySnapshot();
+            isInMovementSnapshot = false;
+        }
+    }
+
+    private void TransitionToMovementSnapshot()
+    {
+        if (movementSnapshot != null)
+        {
+            movementSnapshot.TransitionTo(snapshotTransitionTime);
+        }
+    }
+
+    private void TransitionToGameplaySnapshot()
+    {
+        if (gameplaySnapshot != null)
+        {
+            gameplaySnapshot.TransitionTo(snapshotTransitionTime);
         }
     }
 
@@ -657,9 +736,71 @@ public class PlayerMovement : NetworkBehaviour
             BaseballBat.SetActive(newValue);
 
         if (newValue)
+        {
             StartBatTimer();
+            // Enable x-ray when bat is picked up
+            if (rendererFeatureToggle != null)
+            {
+                Debug.Log("[PlayerMovement] Bat picked up - enabling X-Ray");
+                rendererFeatureToggle.SetFeatureEnabled(true);
+            }
+            else
+            {
+                Debug.LogError("[PlayerMovement] rendererFeatureToggle is NULL! Trying to find it...");
+                FindAndAssignRendererToggle();
+                if (rendererFeatureToggle != null)
+                    rendererFeatureToggle.SetFeatureEnabled(true);
+            }
+        }
         else
+        {
             StopBatTimer();
+            // Disable x-ray when bat is dropped
+            if (rendererFeatureToggle != null)
+            {
+                Debug.Log("[PlayerMovement] Bat dropped - disabling X-Ray");
+                rendererFeatureToggle.SetFeatureEnabled(false);
+            }
+            else
+            {
+                Debug.LogError("[PlayerMovement] rendererFeatureToggle is NULL!");
+            }
+        }
+    }
+
+    private void FindAndAssignRendererToggle()
+    {
+        // Try to find it on the player's camera
+        if (playerCamera != null)
+        {
+            rendererFeatureToggle = playerCamera.GetComponent<RendererFeatureToggle>();
+            if (rendererFeatureToggle != null)
+            {
+                Debug.Log("[PlayerMovement] Found RendererFeatureToggle on player camera!");
+                return;
+            }
+        }
+
+        // Try to find it on the camera holder
+        if (Cameraholder != null)
+        {
+            rendererFeatureToggle = Cameraholder.GetComponent<RendererFeatureToggle>();
+            if (rendererFeatureToggle != null)
+            {
+                Debug.Log("[PlayerMovement] Found RendererFeatureToggle on camera holder!");
+                return;
+            }
+        }
+
+        // Try to find it in the scene
+        rendererFeatureToggle = Object.FindFirstObjectByType<RendererFeatureToggle>();
+        if (rendererFeatureToggle != null)
+        {
+            Debug.Log("[PlayerMovement] Found RendererFeatureToggle in scene!");
+            return;
+        }
+
+        Debug.LogError("[PlayerMovement] Could not find RendererFeatureToggle anywhere!");
     }
 
     [ServerRpc]
@@ -732,5 +873,68 @@ public class PlayerMovement : NetworkBehaviour
         Gizmos.DrawLine(transform.position, transform.position + left);
         Gizmos.DrawLine(transform.position, transform.position + right);
         Gizmos.DrawLine(transform.position + left, transform.position + right);
+    }
+
+    private void UpdateAnimationSpeed()
+    {
+        if (playerAnimator == null || rb == null)
+            return;
+
+        // Only owner updates animations locally
+        if (!IsOwner)
+            return;
+
+        bool airborne = !isGrounded;
+        playerAnimator.SetBool(AirborneHash, airborne);
+        playerAnimator.SetBool(WallRidingHash, wallrunning);
+
+        if (airborne)
+        {
+            playerAnimator.SetFloat(SpeedHash, 0f);
+            currentAnimationSpeed = 1f;
+            playerAnimator.speed = 1f;
+
+            // Still update wall side even while airborne for mid-air attachment
+            UpdateWallSideParameter();
+            return;
+        }
+
+        Vector3 horizontalVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+        float horizontalSpeed = horizontalVelocity.magnitude;
+
+        // Speed parameter: player's current horizontal movement speed with minimum threshold
+        float speedValue = Mathf.Max(0.1f, horizontalSpeed);
+        playerAnimator.SetFloat(SpeedHash, speedValue);
+
+        // Animator playback speed: scale up based on horizontal speed, instant update
+        float targetAnimatorSpeed = Mathf.Max(1f, horizontalSpeed / runSpeed);
+        currentAnimationSpeed = targetAnimatorSpeed;
+        playerAnimator.speed = currentAnimationSpeed;
+
+        // Update bat state
+        playerAnimator.SetBool("HasBat", HasBaseballBat);
+
+        // Update wall side parameter
+        UpdateWallSideParameter();
+    }
+
+    private void UpdateWallSideParameter()
+    {
+        WallRunning wallRunScript = GetComponent<WallRunning>();
+        if (wallRunScript != null)
+        {
+            float wallSide = 0.5f; // Default to center
+
+            if (wallRunScript.wallRight)
+            {
+                wallSide = 1f; // Right
+            }
+            else if (wallRunScript.wallLeft)
+            {
+                wallSide = 0f; // Left
+            }
+
+            playerAnimator.SetFloat(WallSideHash, wallSide);
+        }
     }
 }
